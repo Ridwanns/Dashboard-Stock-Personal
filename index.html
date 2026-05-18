@@ -9940,10 +9940,10 @@
       var COLORS = { MU:'rgb(139,92,246)', AMD:'rgb(239,68,68)', NVDA:'rgb(118,185,0)', TSM:'rgb(6,182,212)' };
       var FALLBACK = {
         mc: {
-          MU:   [340, 550, 760, 1020, 1400, 810, 676],
-          AMD:  [190, 310, 440, 600, 850, 465, 415],
-          NVDA: [125, 185, 255, 340, 475, 270, 221],
-          TSM:  [300, 385, 460, 530, 630, 468, 394]
+          MU:   [235,404,598,874,1545,702,669],
+          AMD:  [162,267,378,536,884,435,414],
+          NVDA: [80,135,197,286,490,230,219],
+          TSM:  [187,284,378,506,755,412,392]
         },
         reg: {
           labels: ['FY22','FY23','FY24','FY25','FY26E','FY27E','FY28E'],
@@ -10017,37 +10017,33 @@
         },
         risk: {
           MU: [
-            {label:'Sharpe', display:'1.85', normalized:0.62},
-            {label:'Sortino', display:'2.72', normalized:0.68},
-            {label:'Beta', display:'1.42', normalized:0.57},
-            {label:'Volatility', display:'62.1%', normalized:0.78},
-            {label:'Max DD', display:'-38.5%', normalized:0.64},
-            {label:'VaR 95%', display:'-5.2%', normalized:0.65}
-          ],
+            {label:'Sharpe'{label:'Sharpe', display:'0.26', normalized:0.09},
+            {label:'Sortino', display:'0.38', normalized:0.10},
+            {label:'Beta', display:'1.96', normalized:0.78},
+            {label:'Volatility', display:'58.8%', normalized:0.73},
+            {label:'Max DD', display:'-38.2%', normalized:0.64},
+            {label:'VaR 95%', display:'-4.7%', normalized:0.59}],
           AMD: [
-            {label:'Sharpe', display:'1.28', normalized:0.43},
-            {label:'Sortino', display:'1.85', normalized:0.46},
-            {label:'Beta', display:'1.65', normalized:0.66},
-            {label:'Volatility', display:'55.4%', normalized:0.69},
-            {label:'Max DD', display:'-45.2%', normalized:0.75},
-            {label:'VaR 95%', display:'-4.5%', normalized:0.56}
-          ],
+            {label:'Sharpe'{label:'Sharpe', display:'0.21', normalized:0.07},
+            {label:'Sortino', display:'0.30', normalized:0.07},
+            {label:'Beta', display:'2.41', normalized:0.96},
+            {label:'Volatility', display:'72.3%', normalized:0.90},
+            {label:'Max DD', display:'-47.0%', normalized:0.78},
+            {label:'VaR 95%', display:'-5.8%', normalized:0.72}],
           NVDA: [
-            {label:'Sharpe', display:'1.55', normalized:0.52},
-            {label:'Sortino', display:'2.28', normalized:0.57},
-            {label:'Beta', display:'1.72', normalized:0.69},
-            {label:'Volatility', display:'57.2%', normalized:0.72},
-            {label:'Max DD', display:'-31.4%', normalized:0.52},
-            {label:'VaR 95%', display:'-4.8%', normalized:0.60}
-          ],
+            {label:'Sharpe'{label:'Sharpe', display:'0.22', normalized:0.07},
+            {label:'Sortino', display:'0.32', normalized:0.08},
+            {label:'Beta', display:'2.25', normalized:0.90},
+            {label:'Volatility', display:'67.5%', normalized:0.84},
+            {label:'Max DD', display:'-43.9%', normalized:0.73},
+            {label:'VaR 95%', display:'-5.4%', normalized:0.68}],
           TSM: [
-            {label:'Sharpe', display:'1.62', normalized:0.54},
-            {label:'Sortino', display:'2.35', normalized:0.59},
-            {label:'Beta', display:'1.26', normalized:0.50},
-            {label:'Volatility', display:'44.8%', normalized:0.56},
-            {label:'Max DD', display:'-26.8%', normalized:0.45},
-            {label:'VaR 95%', display:'-3.9%', normalized:0.49}
-          ]
+            {label:'Sharpe'{label:'Sharpe', display:'0.36', normalized:0.12},
+            {label:'Sortino', display:'0.52', normalized:0.13},
+            {label:'Beta', display:'1.40', normalized:0.56},
+            {label:'Volatility', display:'42.0%', normalized:0.53},
+            {label:'Max DD', display:'-27.3%', normalized:0.46},
+            {label:'VaR 95%', display:'-3.4%', normalized:0.42}]
         },
         comp: {
           MU:   { rows: [{label:'DCF',value:820,weight:30},{label:'Multiples',value:810,weight:30},{label:'Monte Carlo',value:810,weight:20},{label:'Scenario',value:780,weight:20}], fair: 808, cur: 676 },
