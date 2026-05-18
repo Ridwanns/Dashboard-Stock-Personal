@@ -1228,7 +1228,120 @@
       .score-grid { grid-template-columns: 1fr !important }
     }
 
+    /* ═══ COMPREHENSIVE MOBILE FIXES ═══ */
+    @media(max-width:768px) {
+      /* Hero name scaling */
+      .hero-name { font-size: 56px !important; line-height: 1.1 }
+      .hero-content { padding: 24px 16px }
+
+      /* Stock nav — visible scroll indicator + sticky */
+      .stock-nav {
+        position: sticky;
+        top: 56px;
+        z-index: 50;
+        padding: 0 12px;
+      }
+      .stock-nav::after {
+        content: '';
+        position: sticky;
+        right: 0;
+        width: 24px;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(8,12,24,.9));
+        pointer-events: none;
+        margin-left: -24px;
+        flex-shrink: 0;
+      }
+
+      /* Sub-nav — horizontal scroll on mobile */
+      .sub-nav {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        white-space: nowrap;
+        display: flex;
+        flex-wrap: nowrap;
+      }
+      .sub-nav::-webkit-scrollbar { display: none }
+      .sub-tab { flex-shrink: 0; white-space: nowrap }
+
+      /* Comparison stock cards — better spacing on mobile */
+      .cmp-stock-card { padding: 12px 10px !important }
+      .cmp-stock-head { gap: 8px }
+
+      /* Head-to-head table scroll hint */
+      .card-body { -webkit-overflow-scrolling: touch }
+
+      /* Verdict card sizes */
+      .verdict-rating { font-size: 28px !important }
+      .verdict-action { font-size: 14px !important }
+
+      /* Dtable values truncate cleanly */
+      .dtable td:first-child {
+        white-space: normal;
+        word-break: keep-all;
+      }
+      .dtable td:last-child {
+        white-space: nowrap;
+        text-align: right;
+      }
+
+      /* Ticker marquee — prevent horizontal scrollbar */
+      .ticker-marquee { overflow: hidden !important }
+
+      /* TradingView ticker tape spacing */
+      .tradingview-widget-container iframe { max-width: 100% !important }
+
+      /* News cards stack vertically */
+      .news-card, .news-item { padding: 12px }
+
+      /* Section padding tighter */
+      .section { padding: 48px 12px }
+
+      /* About grid stack */
+      .about-grid { gap: 16px }
+
+      /* Sticky header offset */
+      #navbar, .dash-header { z-index: 100 }
+    }
+
+    @media(max-width:480px) {
+      .hero-name { font-size: 44px !important }
+      .hero-tagline, .hero-subtitle { font-size: 13px !important }
+
+      /* Cards tighter padding on tiny screens */
+      .card-body { padding: 12px 10px }
+      .card-head { padding: 10px 12px }
+      .card-title { font-size: 13px }
+
+      /* Reduce dd-title size */
+      .dd-section { margin-bottom: 14px }
+      .dd-title { font-size: 12px !important; margin-bottom: 6px }
+
+      /* Cmp-stock cards smaller chart */
+      .cmp-stock-card .tv-wrap,
+      .cmp-stock-card .tradingview-widget-container { max-height: 80px }
+      .cmp-price { font-size: 18px !important }
+
+      /* Verdict more compact */
+      .verdict { padding: 14px !important }
+      .verdict-rating { font-size: 24px !important }
+      .target-row { gap: 4px !important }
+      .target-val { font-size: 14px !important }
+    }
+
+    @media(max-width:380px) {
+      .hero-name { font-size: 38px !important }
+      .dtable td { padding: 5px 4px; font-size: 10.5px }
+      .snav-btn { padding: 8px 8px; font-size: 10.5px }
+      .sub-tab { padding: 8px 7px; font-size: 10px }
+      .cmp-price { font-size: 16px !important }
+      .card-title { font-size: 12px }
+    }
+
     html, body { overflow-x: hidden }
+    body { -webkit-text-size-adjust: 100%; text-size-adjust: 100% }
 
     /* ═══ IFRAME SKELETON LOADER ═══ */
     .tv-wrap, .tradingview-widget-container {
