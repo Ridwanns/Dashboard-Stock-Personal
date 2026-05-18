@@ -1,0 +1,37 @@
+name: Update Quant Models
+
+on:
+  schedule:
+    # Run Mon-Fri at 21:30 UTC (after US market close at 16:00 ET = 20:00 UTC)
+    - cron: '30 21 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch data and update models
+        run: node scripts/update-quant-models.js
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Commit and push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: auto-update quant models $(date -u +%Y-%m-%d)"
+          git push
