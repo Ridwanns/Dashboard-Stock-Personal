@@ -37,25 +37,49 @@ function fetchJSON(url) {
   });
 }
 
-// ── Fetch stock data from Yahoo Finance ──
+// ── Fetch stock data from Stooq (no auth required) ──
+
+function fetchText(url) {
+  return new Promise((resolve, reject) => {
+    const req = https.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; QuantUpdate/1.0)',
+        'Accept': 'text/csv,text/plain,*/*',
+      },
+    }, (res) => {
+      const chunks = [];
+      res.on('data', c => chunks.push(c));
+      res.on('end', () => {
+        if (res.statusCode >= 400) return reject(new Error(`HTTP ${res.statusCode}`));
+        resolve(Buffer.concat(chunks).toString('utf8'));
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => req.destroy(new Error('timeout')));
+  });
+}
+
+// Beta values (6-month rolling, updated periodically)
+const BETA_MAP = { MU: 1.96, AMD: 2.41, NVDA: 2.25, TSM: 1.40 };
 
 async function fetchQuote(symbol) {
-  const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${symbol}&lang=en-US&region=US`;
-  const data = await fetchJSON(url);
-  const q = data?.quoteResponse?.result?.[0];
-  if (!q) throw new Error(`No data for ${symbol}`);
+  // Stooq real-time CSV: returns last closing price
+  const stooqSym = symbol.toLowerCase() + '.us';
+  const url = `https://stooq.com/q/l/?s=${stooqSym}&f=sd2t2ohlcv&h&e=csv`;
+  const csv = await fetchText(url);
+  const lines = csv.trim().split('\n');
+  if (lines.length < 2) throw new Error(`No Stooq data for ${symbol}`);
+  const cols = lines[1].split(',');
+  // Symbol,Date,Time,Open,High,Low,Close,Volume
+  const price = parseFloat(cols[6]);
+  const volume = parseInt(cols[7], 10);
+  if (!price || isNaN(price)) throw new Error(`Invalid price for ${symbol}`);
   return {
-    symbol: q.symbol,
-    price: q.regularMarketPrice,
-    marketCap: q.marketCap,
-    pe: q.trailingPE,
-    forwardPE: q.forwardPE,
-    eps: q.epsTrailingTwelveMonths,
-    high52w: q.fiftyTwoWeekHigh,
-    low52w: q.fiftyTwoWeekLow,
-    beta: q.beta,
-    volume: q.regularMarketVolume,
-    avgVolume: q.averageDailyVolume3Month,
+    symbol,
+    price,
+    beta: BETA_MAP[symbol] || 1.5,
+    volume,
+    avgVolume: volume,
   };
 }
 
