@@ -1343,6 +1343,298 @@
     html, body { overflow-x: hidden }
     body { -webkit-text-size-adjust: 100%; text-size-adjust: 100% }
 
+    /* ═══ QUANT MODEL ADDITIONS ═══ */
+    /* — Scenario Analysis — */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .scenario-cell {
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(255,255,255,.02);
+      position: relative;
+    }
+    .scenario-cell.bull { border-color: rgba(16,185,129,.4); background: rgba(16,185,129,.06) }
+    .scenario-cell.base { border-color: rgba(251,191,36,.4); background: rgba(251,191,36,.05) }
+    .scenario-cell.bear { border-color: rgba(239,68,68,.4); background: rgba(239,68,68,.06) }
+    .scenario-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .scenario-cell.bull .scenario-label { color: #10b981 }
+    .scenario-cell.base .scenario-label { color: #fbbf24 }
+    .scenario-cell.bear .scenario-label { color: #ef4444 }
+    .scenario-prob {
+      font-size: 9.5px;
+      color: var(--muted);
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .scenario-price {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 6px 0 8px;
+      font-variant-numeric: tabular-nums;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .scenario-delta {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+    .scenario-delta.up { color: #10b981; background: rgba(16,185,129,.12) }
+    .scenario-delta.dn { color: #ef4444; background: rgba(239,68,68,.12) }
+    .scenario-table {
+      width: 100%;
+      font-size: 10.5px;
+      border-collapse: collapse;
+    }
+    .scenario-table td {
+      padding: 3px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+    }
+    .scenario-table tr:last-child td { border-bottom: 0 }
+    .scenario-table td:first-child { color: var(--muted) }
+    .scenario-table td:last-child { text-align: right; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums }
+    .scenario-summary {
+      padding: 12px 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .scenario-summary .label { color: var(--muted) }
+    .scenario-summary .pwfv { font-size: 20px; font-weight: 800; color: var(--text); margin: 0 8px; font-variant-numeric: tabular-nums }
+
+    /* — Reverse DCF — */
+    .rdcf-wrap {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    .rdcf-hero {
+      background: linear-gradient(135deg, rgba(139,92,246,.10), rgba(139,92,246,.02));
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .rdcf-hero-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--muted);
+    }
+    .rdcf-hero-big {
+      font-size: 42px;
+      font-weight: 900;
+      color: var(--text);
+      margin: 6px 0 4px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+    .rdcf-hero-sub {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .rdcf-side {
+      display: flex;
+      flex-direction: column;
+    }
+    .rdcf-compare {
+      padding: 14px;
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      flex: 1;
+    }
+    .rdcf-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,.05);
+      font-size: 12px;
+    }
+    .rdcf-row:last-child { border-bottom: 0 }
+    .rdcf-row .label { color: var(--muted) }
+    .rdcf-row .val { color: var(--text); font-weight: 700; font-variant-numeric: tabular-nums }
+    .rdcf-row.implied { background: rgba(251,191,36,.08); margin: 4px -6px 0; padding: 8px 8px; border-radius: 6px; border: 1px solid rgba(251,191,36,.25); border-bottom: 0 }
+    .rdcf-row.implied .val { color: #fbbf24 }
+    .rdcf-verdict {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .rdcf-verdict.green { background: rgba(16,185,129,.10); color: #10b981; border: 1px solid rgba(16,185,129,.30) }
+    .rdcf-verdict.amber { background: rgba(251,191,36,.10); color: #fbbf24; border: 1px solid rgba(251,191,36,.30) }
+    .rdcf-verdict.red { background: rgba(239,68,68,.10); color: #ef4444; border: 1px solid rgba(239,68,68,.30) }
+
+    /* — WACC × Terminal Growth Sensitivity Matrix — */
+    .sens-matrix {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 2px;
+      font-size: 11px;
+    }
+    .sens-matrix th, .sens-matrix td {
+      padding: 8px 6px;
+      text-align: center;
+      border-radius: 4px;
+      font-variant-numeric: tabular-nums;
+    }
+    .sens-matrix thead th {
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 10.5px;
+    }
+    .sens-matrix thead th:first-child { background: transparent }
+    .sens-matrix tbody th {
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 10.5px;
+      text-align: right;
+      padding-right: 10px;
+    }
+    .sens-matrix td.v1 { background: rgba(239,68,68,.18); color: #fecaca }
+    .sens-matrix td.v2 { background: rgba(239,68,68,.10); color: #fecaca }
+    .sens-matrix td.v3 { background: rgba(255,255,255,.04); color: var(--text) }
+    .sens-matrix td.v4 { background: rgba(16,185,129,.10); color: #6ee7b7 }
+    .sens-matrix td.v5 { background: rgba(16,185,129,.18); color: #6ee7b7 }
+    .sens-matrix td.current {
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.6);
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .sens-legend {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: var(--muted);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .sens-legend strong { color: var(--text); font-variant-numeric: tabular-nums }
+
+    /* — Quality Scorecard — */
+    .quality-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .quality-metric {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .qm-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .qm-label {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: .3px;
+    }
+    .qm-grade {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 800;
+    }
+    .qm-grade.a { background: rgba(16,185,129,.18); color: #10b981 }
+    .qm-grade.b { background: rgba(132,204,22,.18); color: #84cc16 }
+    .qm-grade.c { background: rgba(251,191,36,.18); color: #fbbf24 }
+    .qm-grade.d { background: rgba(239,68,68,.18); color: #ef4444 }
+    .qm-val {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+      margin: 2px 0 6px;
+    }
+    .qm-bar {
+      height: 4px;
+      background: rgba(255,255,255,.06);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qm-bar > div { height: 100%; border-radius: 2px }
+    .qm-bar.a > div { background: linear-gradient(90deg, #10b981, #34d399) }
+    .qm-bar.b > div { background: linear-gradient(90deg, #84cc16, #a3e635) }
+    .qm-bar.c > div { background: linear-gradient(90deg, #fbbf24, #fcd34d) }
+    .qm-bar.d > div { background: linear-gradient(90deg, #ef4444, #f87171) }
+    .quality-summary {
+      margin-top: 14px;
+      padding: 12px 14px;
+      background: linear-gradient(90deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      font-size: 12px;
+    }
+    .quality-summary .label { color: var(--muted) }
+    .quality-summary .overall {
+      font-size: 22px;
+      font-weight: 900;
+      margin: 0 8px;
+    }
+    .quality-summary .overall.a { color: #10b981 }
+    .quality-summary .overall.b { color: #84cc16 }
+    .quality-summary .overall.c { color: #fbbf24 }
+    .quality-summary .overall.d { color: #ef4444 }
+
+    @media(max-width:768px) {
+      .scenario-grid { grid-template-columns: 1fr; gap: 10px }
+      .rdcf-wrap { grid-template-columns: 1fr; gap: 12px }
+      .rdcf-hero-big { font-size: 36px }
+      .quality-grid { grid-template-columns: repeat(2, 1fr); gap: 8px }
+      .sens-matrix { font-size: 9.5px }
+      .sens-matrix th, .sens-matrix td { padding: 5px 3px }
+    }
+    @media(max-width:480px) {
+      .sens-matrix { font-size: 8.5px }
+      .sens-matrix th, .sens-matrix td { padding: 4px 2px }
+    }
+
     /* ═══ FINANCIAL BAR + LINE CHARTS ═══ */
     .fin-charts-wrap {
       display: grid;
@@ -4706,6 +4998,153 @@
                 </div>
               </div>
             </div>
+
+            <!-- Scenario Analysis (Bull / Base / Bear) -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Scenario Analysis &mdash; Bull / Base / Bear</div>
+                <span style="font-size:10px;color:var(--muted)">Probability-Weighted Fair Value</span>
+              </div>
+              <div class="card-body">
+                <div class="scenario-grid">
+                  <div class="scenario-cell bull">
+                    <div class="scenario-label">Bull <span class="scenario-prob">30%</span></div>
+                    <div class="scenario-price">$1,200 <span class="scenario-delta up">+76%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+35%</td></tr>
+                      <tr><td>Net Margin</td><td>30%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$130</td></tr>
+                      <tr><td>Exit P/E</td><td>9&times;</td></tr>
+                      <tr><td>Driver</td><td>HBM supercycle</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell base">
+                    <div class="scenario-label">Base <span class="scenario-prob">50%</span></div>
+                    <div class="scenario-price">$758 <span class="scenario-delta up">+11%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+22%</td></tr>
+                      <tr><td>Net Margin</td><td>22%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$84</td></tr>
+                      <tr><td>Exit P/E</td><td>9&times;</td></tr>
+                      <tr><td>Driver</td><td>Steady HBM3E ramp</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell bear">
+                    <div class="scenario-label">Bear <span class="scenario-prob">20%</span></div>
+                    <div class="scenario-price">$350 <span class="scenario-delta dn">-49%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+5%</td></tr>
+                      <tr><td>Net Margin</td><td>10%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$30</td></tr>
+                      <tr><td>Exit P/E</td><td>12&times;</td></tr>
+                      <tr><td>Driver</td><td>Memory cycle peak</td></tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="scenario-summary">
+                  <span><span class="label">Probability-Weighted Fair Value:</span><span class="pwfv">$799</span></span>
+                  <span><span class="label">Current $681.54</span> &rarr; <span class="scenario-delta up">+17% upside</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reverse DCF -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Reverse DCF &mdash; Implied Growth</div>
+                <span style="font-size:10px;color:var(--muted)">What is the market pricing in?</span>
+              </div>
+              <div class="card-body">
+                <div class="rdcf-wrap">
+                  <div class="rdcf-hero">
+                    <div class="rdcf-hero-label">Market is Pricing In</div>
+                    <div class="rdcf-hero-big">+18%</div>
+                    <div class="rdcf-hero-sub">5-Year Revenue Growth (CAGR)</div>
+                  </div>
+                  <div class="rdcf-side">
+                    <div class="rdcf-compare">
+                      <div class="rdcf-row"><span class="label">Historical 5Y CAGR</span><span class="val">+7.8%</span></div>
+                      <div class="rdcf-row"><span class="label">FY24 &rarr; FY25 actual</span><span class="val">+48.9%</span></div>
+                      <div class="rdcf-row"><span class="label">Analyst Consensus FY27E</span><span class="val">+28%</span></div>
+                      <div class="rdcf-row implied"><span class="label">Implied by Current Price</span><span class="val">+18%</span></div>
+                    </div>
+                    <div class="rdcf-verdict amber">Verdict: Reasonable &mdash; below analyst consensus, above historical</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WACC × Terminal Growth Sensitivity -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Sensitivity &mdash; WACC &times; Terminal Growth</div>
+                <span style="font-size:10px;color:var(--muted)">Fair value per share at varying assumptions</span>
+              </div>
+              <div class="card-body">
+                <table class="sens-matrix">
+                  <thead>
+                    <tr><th></th><th>WACC 9%</th><th>10%</th><th>11%</th><th>12%</th><th>13%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>g = 4.0%</th><td class="v5">$1,310</td><td class="v4">$1,110</td><td class="v4">$990</td><td class="v3">$890</td><td class="v3">$810</td></tr>
+                    <tr><th>g = 3.5%</th><td class="v5">$1,180</td><td class="v4">$1,030</td><td class="v4">$920</td><td class="v3">$830</td><td class="v2">$760</td></tr>
+                    <tr><th>g = 3.0%</th><td class="v4">$1,090</td><td class="v4">$960</td><td class="v3 current">$870</td><td class="v3">$790</td><td class="v2">$720</td></tr>
+                    <tr><th>g = 2.5%</th><td class="v4">$1,020</td><td class="v3">$910</td><td class="v3">$820</td><td class="v2">$750</td><td class="v2">$680</td></tr>
+                    <tr><th>g = 2.0%</th><td class="v4">$970</td><td class="v3">$870</td><td class="v3">$790</td><td class="v2">$720</td><td class="v1">$650</td></tr>
+                  </tbody>
+                </table>
+                <div class="sens-legend">
+                  <span>Current cell: WACC <strong>11.20%</strong> &times; g <strong>3.0%</strong> = <strong>$870</strong></span>
+                  <span>Current Price: <strong>$681.54</strong> &middot; Range: <strong>$650 &mdash; $1,310</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quality Scorecard -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Quality Scorecard</div>
+                <span style="font-size:10px;color:var(--muted)">Fundamental quality factors (FY25)</span>
+              </div>
+              <div class="card-body">
+                <div class="quality-grid">
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">ROIC</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">17.4%</div>
+                    <div class="qm-bar b"><div style="width:73%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">FCF Margin</div><div class="qm-grade c">C</div></div>
+                    <div class="qm-val">4.5%</div>
+                    <div class="qm-bar c"><div style="width:38%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Gross Margin</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">39.8%</div>
+                    <div class="qm-bar b"><div style="width:66%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">R&amp;D Intensity</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">10.2%</div>
+                    <div class="qm-bar b"><div style="width:68%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Debt / Equity</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">0.26&times;</div>
+                    <div class="qm-bar b"><div style="width:74%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Asset Turnover</div><div class="qm-grade c">C</div></div>
+                    <div class="qm-val">0.45&times;</div>
+                    <div class="qm-bar c"><div style="width:45%"></div></div>
+                  </div>
+                </div>
+                <div class="quality-summary">
+                  <span><span class="label">Overall Quality Score:</span><span class="overall b">B</span><span style="font-size:11px;color:var(--muted)">Cyclical memory commodity &mdash; high capex offsets margin upside</span></span>
+                  <span style="font-size:11px;color:var(--muted)">Top 40% vs semis sector</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6300,6 +6739,153 @@
                   <div style="font-size:40px;font-weight:900;font-family:var(--font-mono);color:var(--amd)" id="amd-fair-value">$0</div>
                   <div style="font-size:12px;color:var(--muted);margin-top:4px">(0.25 &times; $457) + (0.30 &times; $475) + (0.20 &times; $485) + (0.25 &times; $460) = <strong style="color:var(--amd)">$470</strong></div>
                   <div style="margin-top:10px;font-size:12px" id="amd-upside"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scenario Analysis (Bull / Base / Bear) -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Scenario Analysis &mdash; Bull / Base / Bear</div>
+                <span style="font-size:10px;color:var(--muted)">Probability-Weighted Fair Value</span>
+              </div>
+              <div class="card-body">
+                <div class="scenario-grid">
+                  <div class="scenario-cell bull">
+                    <div class="scenario-label">Bull <span class="scenario-prob">25%</span></div>
+                    <div class="scenario-price">$700 <span class="scenario-delta up">+66%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+30%</td></tr>
+                      <tr><td>Net Margin</td><td>20%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$22</td></tr>
+                      <tr><td>Exit P/E</td><td>32&times;</td></tr>
+                      <tr><td>Driver</td><td>DC AI accel share gain</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell base">
+                    <div class="scenario-label">Base <span class="scenario-prob">55%</span></div>
+                    <div class="scenario-price">$475 <span class="scenario-delta up">+13%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+18%</td></tr>
+                      <tr><td>Net Margin</td><td>14%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$13</td></tr>
+                      <tr><td>Exit P/E</td><td>36&times;</td></tr>
+                      <tr><td>Driver</td><td>MI300/MI400 ramp on plan</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell bear">
+                    <div class="scenario-label">Bear <span class="scenario-prob">20%</span></div>
+                    <div class="scenario-price">$200 <span class="scenario-delta dn">-52%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+5%</td></tr>
+                      <tr><td>Net Margin</td><td>6%</td></tr>
+                      <tr><td>FY27E EPS</td><td>$4</td></tr>
+                      <tr><td>Exit P/E</td><td>50&times;</td></tr>
+                      <tr><td>Driver</td><td>AI capex slowdown</td></tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="scenario-summary">
+                  <span><span class="label">Probability-Weighted Fair Value:</span><span class="pwfv">$476</span></span>
+                  <span><span class="label">Current $420.99</span> &rarr; <span class="scenario-delta up">+13% upside</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reverse DCF -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Reverse DCF &mdash; Implied Growth</div>
+                <span style="font-size:10px;color:var(--muted)">What is the market pricing in?</span>
+              </div>
+              <div class="card-body">
+                <div class="rdcf-wrap">
+                  <div class="rdcf-hero" style="background:linear-gradient(135deg,rgba(239,68,68,.10),rgba(239,68,68,.02))">
+                    <div class="rdcf-hero-label">Market is Pricing In</div>
+                    <div class="rdcf-hero-big">+24%</div>
+                    <div class="rdcf-hero-sub">5-Year Revenue Growth (CAGR)</div>
+                  </div>
+                  <div class="rdcf-side">
+                    <div class="rdcf-compare">
+                      <div class="rdcf-row"><span class="label">Historical 5Y CAGR</span><span class="val">+20.6%</span></div>
+                      <div class="rdcf-row"><span class="label">FY24 &rarr; FY25 actual</span><span class="val">+34.3%</span></div>
+                      <div class="rdcf-row"><span class="label">Analyst Consensus FY27E</span><span class="val">+22%</span></div>
+                      <div class="rdcf-row implied"><span class="label">Implied by Current Price</span><span class="val">+24%</span></div>
+                    </div>
+                    <div class="rdcf-verdict amber">Verdict: Aggressive &mdash; slightly above analyst consensus, demands MI400 execution</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WACC × Terminal Growth Sensitivity -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Sensitivity &mdash; WACC &times; Terminal Growth</div>
+                <span style="font-size:10px;color:var(--muted)">Fair value per share at varying assumptions</span>
+              </div>
+              <div class="card-body">
+                <table class="sens-matrix">
+                  <thead>
+                    <tr><th></th><th>WACC 12%</th><th>14%</th><th>16%</th><th>18%</th><th>20%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>g = 4.0%</th><td class="v5">$840</td><td class="v4">$680</td><td class="v4">$570</td><td class="v3">$490</td><td class="v3">$430</td></tr>
+                    <tr><th>g = 3.5%</th><td class="v5">$770</td><td class="v4">$630</td><td class="v3">$530</td><td class="v3">$460</td><td class="v2">$400</td></tr>
+                    <tr><th>g = 3.0%</th><td class="v4">$710</td><td class="v3">$580</td><td class="v3 current">$500</td><td class="v2">$430</td><td class="v2">$380</td></tr>
+                    <tr><th>g = 2.5%</th><td class="v4">$660</td><td class="v3">$540</td><td class="v3">$460</td><td class="v2">$400</td><td class="v1">$350</td></tr>
+                    <tr><th>g = 2.0%</th><td class="v3">$610</td><td class="v3">$500</td><td class="v2">$430</td><td class="v2">$370</td><td class="v1">$330</td></tr>
+                  </tbody>
+                </table>
+                <div class="sens-legend">
+                  <span>Current cell: WACC <strong>17.18%</strong> &times; g <strong>3.0%</strong> &asymp; <strong>$500</strong></span>
+                  <span>Current Price: <strong>$420.99</strong> &middot; Range: <strong>$330 &mdash; $840</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quality Scorecard -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Quality Scorecard</div>
+                <span style="font-size:10px;color:var(--muted)">Fundamental quality factors (FY25)</span>
+              </div>
+              <div class="card-body">
+                <div class="quality-grid">
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">ROIC</div><div class="qm-grade c">C</div></div>
+                    <div class="qm-val">6.9%</div>
+                    <div class="qm-bar c"><div style="width:35%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">FCF Margin</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">16.4%</div>
+                    <div class="qm-bar b"><div style="width:65%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Gross Margin</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">49.5%</div>
+                    <div class="qm-bar b"><div style="width:70%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">R&amp;D Intensity</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">23.4%</div>
+                    <div class="qm-bar a"><div style="width:88%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Debt / Equity</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">0.05&times;</div>
+                    <div class="qm-bar a"><div style="width:95%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Asset Turnover</div><div class="qm-grade c">C</div></div>
+                    <div class="qm-val">0.45&times;</div>
+                    <div class="qm-bar c"><div style="width:45%"></div></div>
+                  </div>
+                </div>
+                <div class="quality-summary">
+                  <span><span class="label">Overall Quality Score:</span><span class="overall b">B+</span><span style="font-size:11px;color:var(--muted)">Strong R&amp;D + clean balance sheet, ROIC dragged by Xilinx goodwill</span></span>
+                  <span style="font-size:11px;color:var(--muted)">Top 30% vs semis sector</span>
                 </div>
               </div>
             </div>
@@ -7912,6 +8498,153 @@
                   <div style="margin-top:8px;padding:8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:6px;font-size:11px;color:var(--yellow)">
                     DCF weight reduced to 15% — traditional DCF undervalues platform/ecosystem companies. Multiples weight increased to 35% as peer-relative valuation more meaningful for NVDA.
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scenario Analysis (Bull / Base / Bear) -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Scenario Analysis &mdash; Bull / Base / Bear</div>
+                <span style="font-size:10px;color:var(--muted)">Probability-Weighted Fair Value</span>
+              </div>
+              <div class="card-body">
+                <div class="scenario-grid">
+                  <div class="scenario-cell bull">
+                    <div class="scenario-label">Bull <span class="scenario-prob">35%</span></div>
+                    <div class="scenario-price">$400 <span class="scenario-delta up">+80%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+55%</td></tr>
+                      <tr><td>Net Margin</td><td>56%</td></tr>
+                      <tr><td>FY28E EPS</td><td>$16</td></tr>
+                      <tr><td>Exit P/E</td><td>25&times;</td></tr>
+                      <tr><td>Driver</td><td>AGI capex, sovereign AI</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell base">
+                    <div class="scenario-label">Base <span class="scenario-prob">40%</span></div>
+                    <div class="scenario-price">$275 <span class="scenario-delta up">+24%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+30%</td></tr>
+                      <tr><td>Net Margin</td><td>52%</td></tr>
+                      <tr><td>FY28E EPS</td><td>$12</td></tr>
+                      <tr><td>Exit P/E</td><td>23&times;</td></tr>
+                      <tr><td>Driver</td><td>Datacenter steady</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell bear">
+                    <div class="scenario-label">Bear <span class="scenario-prob">25%</span></div>
+                    <div class="scenario-price">$120 <span class="scenario-delta dn">-46%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+8%</td></tr>
+                      <tr><td>Net Margin</td><td>40%</td></tr>
+                      <tr><td>FY28E EPS</td><td>$6</td></tr>
+                      <tr><td>Exit P/E</td><td>20&times;</td></tr>
+                      <tr><td>Driver</td><td>AI capex normalisation</td></tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="scenario-summary">
+                  <span><span class="label">Probability-Weighted Fair Value:</span><span class="pwfv">$280</span></span>
+                  <span><span class="label">Current $222.32</span> &rarr; <span class="scenario-delta up">+26% upside</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reverse DCF -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Reverse DCF &mdash; Implied Growth</div>
+                <span style="font-size:10px;color:var(--muted)">What is the market pricing in?</span>
+              </div>
+              <div class="card-body">
+                <div class="rdcf-wrap">
+                  <div class="rdcf-hero" style="background:linear-gradient(135deg,rgba(16,185,129,.10),rgba(16,185,129,.02))">
+                    <div class="rdcf-hero-label">Market is Pricing In</div>
+                    <div class="rdcf-hero-big">+22%</div>
+                    <div class="rdcf-hero-sub">5-Year Revenue Growth (CAGR)</div>
+                  </div>
+                  <div class="rdcf-side">
+                    <div class="rdcf-compare">
+                      <div class="rdcf-row"><span class="label">Historical 5Y CAGR</span><span class="val">+68.4%</span></div>
+                      <div class="rdcf-row"><span class="label">FY25 &rarr; FY26 actual</span><span class="val">+65.5%</span></div>
+                      <div class="rdcf-row"><span class="label">Analyst Consensus FY28E</span><span class="val">+30%</span></div>
+                      <div class="rdcf-row implied"><span class="label">Implied by Current Price</span><span class="val">+22%</span></div>
+                    </div>
+                    <div class="rdcf-verdict green">Verdict: Conservative &mdash; market pricing well below historical &amp; analyst growth</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WACC × Terminal Growth Sensitivity -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Sensitivity &mdash; WACC &times; Terminal Growth</div>
+                <span style="font-size:10px;color:var(--muted)">Fair value per share at varying assumptions</span>
+              </div>
+              <div class="card-body">
+                <table class="sens-matrix">
+                  <thead>
+                    <tr><th></th><th>WACC 9%</th><th>10%</th><th>11%</th><th>12%</th><th>13%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>g = 4.0%</th><td class="v5">$340</td><td class="v5">$300</td><td class="v4">$270</td><td class="v4">$245</td><td class="v3">$225</td></tr>
+                    <tr><th>g = 3.5%</th><td class="v5">$320</td><td class="v4">$285</td><td class="v4">$260</td><td class="v3">$235</td><td class="v3">$215</td></tr>
+                    <tr><th>g = 3.0%</th><td class="v4">$305</td><td class="v4">$272</td><td class="v3 current">$248</td><td class="v3">$226</td><td class="v2">$208</td></tr>
+                    <tr><th>g = 2.5%</th><td class="v4">$290</td><td class="v3">$260</td><td class="v3">$238</td><td class="v2">$218</td><td class="v2">$200</td></tr>
+                    <tr><th>g = 2.0%</th><td class="v4">$278</td><td class="v3">$250</td><td class="v3">$228</td><td class="v2">$208</td><td class="v1">$192</td></tr>
+                  </tbody>
+                </table>
+                <div class="sens-legend">
+                  <span>Current cell: WACC <strong>11.05%</strong> &times; g <strong>3.0%</strong> &asymp; <strong>$248</strong></span>
+                  <span>Current Price: <strong>$222.32</strong> &middot; Range: <strong>$192 &mdash; $340</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quality Scorecard -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Quality Scorecard</div>
+                <span style="font-size:10px;color:var(--muted)">Fundamental quality factors (FY26)</span>
+              </div>
+              <div class="card-body">
+                <div class="quality-grid">
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">ROIC</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">76%</div>
+                    <div class="qm-bar a"><div style="width:98%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">FCF Margin</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">44.8%</div>
+                    <div class="qm-bar a"><div style="width:96%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Gross Margin</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">71.1%</div>
+                    <div class="qm-bar a"><div style="width:95%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">R&amp;D Intensity</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">8.6%</div>
+                    <div class="qm-bar b"><div style="width:58%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Debt / Equity</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">0.06&times;</div>
+                    <div class="qm-bar a"><div style="width:94%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Asset Turnover</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">1.04&times;</div>
+                    <div class="qm-bar b"><div style="width:72%"></div></div>
+                  </div>
+                </div>
+                <div class="quality-summary">
+                  <span><span class="label">Overall Quality Score:</span><span class="overall a">A</span><span style="font-size:11px;color:var(--muted)">World-class margins + ROIC, platform moat (CUDA ecosystem)</span></span>
+                  <span style="font-size:11px;color:var(--muted)">Top 1% vs semis sector</span>
                 </div>
               </div>
             </div>
@@ -9553,6 +10286,153 @@
                   <div style="margin-top:8px;padding:8px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);border-radius:6px;font-size:11px;color:var(--yellow)">
                     DCF weight set to 30% — capex-heavy foundry economics map well to traditional DCF. Multiples weight 25% reflects peer-relative comparison against GlobalFoundries, UMC, and foundry median. Current implied upside ~10.5% from $417.72.
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scenario Analysis (Bull / Base / Bear) -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Scenario Analysis &mdash; Bull / Base / Bear</div>
+                <span style="font-size:10px;color:var(--muted)">Probability-Weighted Fair Value</span>
+              </div>
+              <div class="card-body">
+                <div class="scenario-grid">
+                  <div class="scenario-cell bull">
+                    <div class="scenario-label">Bull <span class="scenario-prob">30%</span></div>
+                    <div class="scenario-price">$550 <span class="scenario-delta up">+32%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+25%</td></tr>
+                      <tr><td>Net Margin</td><td>50%</td></tr>
+                      <tr><td>FY27E EPS/ADR</td><td>$28</td></tr>
+                      <tr><td>Exit P/E</td><td>20&times;</td></tr>
+                      <tr><td>Driver</td><td>3nm/2nm pricing power</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell base">
+                    <div class="scenario-label">Base <span class="scenario-prob">55%</span></div>
+                    <div class="scenario-price">$465 <span class="scenario-delta up">+11%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+15%</td></tr>
+                      <tr><td>Net Margin</td><td>43%</td></tr>
+                      <tr><td>FY27E EPS/ADR</td><td>$22</td></tr>
+                      <tr><td>Exit P/E</td><td>21&times;</td></tr>
+                      <tr><td>Driver</td><td>Foundry share leadership</td></tr>
+                    </table>
+                  </div>
+                  <div class="scenario-cell bear">
+                    <div class="scenario-label">Bear <span class="scenario-prob">15%</span></div>
+                    <div class="scenario-price">$250 <span class="scenario-delta dn">-40%</span></div>
+                    <table class="scenario-table">
+                      <tr><td>Revenue CAGR</td><td>+3%</td></tr>
+                      <tr><td>Net Margin</td><td>32%</td></tr>
+                      <tr><td>FY27E EPS/ADR</td><td>$13</td></tr>
+                      <tr><td>Exit P/E</td><td>19&times;</td></tr>
+                      <tr><td>Driver</td><td>Taiwan geopolitical risk</td></tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="scenario-summary">
+                  <span><span class="label">Probability-Weighted Fair Value:</span><span class="pwfv">$458</span></span>
+                  <span><span class="label">Current $418</span> &rarr; <span class="scenario-delta up">+10% upside</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reverse DCF -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Reverse DCF &mdash; Implied Growth</div>
+                <span style="font-size:10px;color:var(--muted)">What is the market pricing in?</span>
+              </div>
+              <div class="card-body">
+                <div class="rdcf-wrap">
+                  <div class="rdcf-hero" style="background:linear-gradient(135deg,rgba(6,182,212,.10),rgba(6,182,212,.02))">
+                    <div class="rdcf-hero-label">Market is Pricing In</div>
+                    <div class="rdcf-hero-big">+13%</div>
+                    <div class="rdcf-hero-sub">5-Year Revenue Growth (CAGR)</div>
+                  </div>
+                  <div class="rdcf-side">
+                    <div class="rdcf-compare">
+                      <div class="rdcf-row"><span class="label">Historical 5Y CAGR</span><span class="val">+22.3%</span></div>
+                      <div class="rdcf-row"><span class="label">FY24 &rarr; FY25 actual</span><span class="val">+40.4%</span></div>
+                      <div class="rdcf-row"><span class="label">Analyst Consensus FY27E</span><span class="val">+17%</span></div>
+                      <div class="rdcf-row implied"><span class="label">Implied by Current Price</span><span class="val">+13%</span></div>
+                    </div>
+                    <div class="rdcf-verdict green">Verdict: Conservative &mdash; market discounts geopolitical risk; upside if calm</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- WACC × Terminal Growth Sensitivity -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Sensitivity &mdash; WACC &times; Terminal Growth</div>
+                <span style="font-size:10px;color:var(--muted)">Fair value per ADR at varying assumptions</span>
+              </div>
+              <div class="card-body">
+                <table class="sens-matrix">
+                  <thead>
+                    <tr><th></th><th>WACC 8%</th><th>9%</th><th>10%</th><th>11%</th><th>12%</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><th>g = 3.5%</th><td class="v5">$650</td><td class="v4">$570</td><td class="v4">$510</td><td class="v3">$465</td><td class="v3">$425</td></tr>
+                    <tr><th>g = 3.0%</th><td class="v5">$600</td><td class="v4">$530</td><td class="v3">$478</td><td class="v3">$436</td><td class="v2">$402</td></tr>
+                    <tr><th>g = 2.5%</th><td class="v4">$558</td><td class="v3">$496</td><td class="v3 current">$453</td><td class="v2">$415</td><td class="v2">$382</td></tr>
+                    <tr><th>g = 2.0%</th><td class="v4">$523</td><td class="v3">$468</td><td class="v3">$428</td><td class="v2">$393</td><td class="v1">$362</td></tr>
+                    <tr><th>g = 1.5%</th><td class="v3">$493</td><td class="v3">$444</td><td class="v2">$406</td><td class="v2">$374</td><td class="v1">$346</td></tr>
+                  </tbody>
+                </table>
+                <div class="sens-legend">
+                  <span>Current cell: WACC <strong>9.85%</strong> &times; g <strong>2.5%</strong> &asymp; <strong>$453</strong></span>
+                  <span>Current Price: <strong>$418</strong> &middot; Range: <strong>$346 &mdash; $650</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quality Scorecard -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Quality Scorecard</div>
+                <span style="font-size:10px;color:var(--muted)">Fundamental quality factors (FY25)</span>
+              </div>
+              <div class="card-body">
+                <div class="quality-grid">
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">ROIC</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">37%</div>
+                    <div class="qm-bar a"><div style="width:90%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">FCF Margin</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">33.4%</div>
+                    <div class="qm-bar b"><div style="width:75%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Gross Margin</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">59.9%</div>
+                    <div class="qm-bar a"><div style="width:85%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">R&amp;D Intensity</div><div class="qm-grade b">B</div></div>
+                    <div class="qm-val">7.5%</div>
+                    <div class="qm-bar b"><div style="width:50%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Debt / Equity</div><div class="qm-grade a">A</div></div>
+                    <div class="qm-val">0.19&times;</div>
+                    <div class="qm-bar a"><div style="width:82%"></div></div>
+                  </div>
+                  <div class="quality-metric">
+                    <div class="qm-head"><div class="qm-label">Asset Turnover</div><div class="qm-grade c">C</div></div>
+                    <div class="qm-val">0.51&times;</div>
+                    <div class="qm-bar c"><div style="width:48%"></div></div>
+                  </div>
+                </div>
+                <div class="quality-summary">
+                  <span><span class="label">Overall Quality Score:</span><span class="overall a">A−</span><span style="font-size:11px;color:var(--muted)">Foundry monopoly economics, capex intensity caps asset turnover</span></span>
+                  <span style="font-size:11px;color:var(--muted)">Top 5% vs semis sector</span>
                 </div>
               </div>
             </div>
