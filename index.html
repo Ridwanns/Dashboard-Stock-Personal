@@ -1343,17 +1343,17 @@
     html, body { overflow-x: hidden }
     body { -webkit-text-size-adjust: 100%; text-size-adjust: 100% }
 
-    /* ═══ FINANCIAL BAR CHARTS ═══ */
+    /* ═══ FINANCIAL BAR + LINE CHARTS ═══ */
     .fin-charts-wrap {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
     }
     .fin-chart-card {
       background: rgba(255,255,255,.02);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 10px 12px 8px;
       display: flex;
       flex-direction: column;
     }
@@ -1361,54 +1361,79 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      margin-bottom: 10px;
       gap: 8px;
     }
     .fin-chart-title {
-      font-size: 11.5px;
+      font-size: 10.5px;
       font-weight: 700;
-      letter-spacing: .5px;
+      letter-spacing: .4px;
       color: var(--text);
       text-transform: uppercase;
     }
     .fin-chart-latest {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--muted);
       white-space: nowrap;
     }
     .fin-chart-latest .val {
       color: var(--text);
-      font-weight: 600;
-      margin-right: 4px;
+      font-weight: 700;
+      margin-right: 3px;
     }
     .fin-chart-latest .yoy {
       display: inline-block;
-      font-size: 10px;
-      padding: 1px 6px;
+      font-size: 9.5px;
+      padding: 1px 5px;
       border-radius: 4px;
-      margin-left: 4px;
+      margin-left: 5px;
     }
     .fin-chart-latest .yoy.up { color: #10b981; background: rgba(16,185,129,.12) }
     .fin-chart-latest .yoy.dn { color: #ef4444; background: rgba(239,68,68,.12) }
+    .fin-chart-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin: 4px 0 2px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .fin-chart-sub .val { color: var(--text); font-weight: 600 }
+    .fin-line-dot {
+      display: inline-block;
+      width: 16px; height: 2px;
+      background: #fbbf24;
+      border-radius: 2px;
+      position: relative;
+    }
+    .fin-line-dot::after {
+      content: '';
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 5px; height: 5px;
+      background: #fbbf24;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
     .fin-chart-canvas {
       width: 100%;
-      height: 160px;
+      height: 120px;
       display: block;
+      margin-top: 6px;
     }
     .fin-meta {
       display: flex;
       justify-content: space-between;
-      font-size: 10.5px;
+      font-size: 10px;
       color: var(--muted);
-      margin-top: 12px;
-      padding-top: 10px;
+      margin-top: 10px;
+      padding-top: 8px;
       border-top: 1px solid var(--glass-border);
     }
     .fin-loading {
       display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 380px;
+      min-height: 240px;
       color: var(--muted);
       font-size: 12px;
       flex-direction: column;
@@ -1425,14 +1450,14 @@
     @keyframes fin-spin { to { transform: rotate(360deg) } }
     .fin-error {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 20px;
       color: var(--muted);
       font-size: 12px;
       grid-column: 1 / -1;
     }
     .fin-error button {
-      margin-top: 12px;
-      padding: 6px 14px;
+      margin-top: 10px;
+      padding: 5px 12px;
       background: rgba(255,255,255,.05);
       border: 1px solid var(--glass-border);
       border-radius: 6px;
@@ -1442,11 +1467,14 @@
       cursor: pointer;
     }
     .fin-error button:hover { background: rgba(255,255,255,.08) }
-    @media(max-width:768px) {
+    @media(max-width:900px) {
+      .fin-charts-wrap { grid-template-columns: repeat(2, 1fr) }
+    }
+    @media(max-width:560px) {
       .fin-charts-wrap { grid-template-columns: 1fr; gap: 10px }
-      .fin-chart-canvas { height: 140px }
-      .fin-chart-title { font-size: 11px }
-      .fin-chart-latest { font-size: 10.5px }
+      .fin-chart-canvas { height: 110px }
+      .fin-chart-title { font-size: 10px }
+      .fin-chart-latest { font-size: 10px }
     }
 
     /* ═══ IFRAME SKELETON LOADER ═══ */
@@ -13723,20 +13751,26 @@
   </script>
 
   <script>
-  // ── Financial Bar Charts ──
-  // Fetches /api/financials and renders 5 bar charts per stock
-  // (Revenue, Net Income, Gross Profit, EBIT, FCF).
+  // ── Financial Bar+Line Charts ──
+  // Fetches /api/financials and renders 3 combined panels per stock:
+  //  1. Revenue (bars) + Net Income (line)
+  //  2. Gross Profit (bars) + Operating Income (line)
+  //  3. Free Cash Flow (bars with trend line)
   (function(){
-    var CACHE_KEY = 'fin-charts-v1';
+    var CACHE_KEY = 'fin-charts-v2';
     var CACHE_TTL_MS = 6 * 60 * 60 * 1000;
     var rendered = {};
 
-    var METRICS = [
-      { key: 'revenue',     label: 'Revenue' },
-      { key: 'netIncome',   label: 'Net Income' },
-      { key: 'grossProfit', label: 'Gross Profit' },
-      { key: 'ebit',        label: 'Operating Income' },
-      { key: 'fcf',         label: 'Free Cash Flow' }
+    var GROUPS = [
+      { id: 'topbot',  title: 'Revenue & Net Income',
+        bars: { key: 'revenue',     label: 'Revenue' },
+        line: { key: 'netIncome',   label: 'Net Income' } },
+      { id: 'profit',  title: 'Gross Profit & Operating Income',
+        bars: { key: 'grossProfit', label: 'Gross Profit' },
+        line: { key: 'ebit',        label: 'Op. Income' } },
+      { id: 'fcf',     title: 'Free Cash Flow',
+        bars: { key: 'fcf',         label: 'FCF' },
+        line: null }
     ];
 
     function computeFCF(data) {
@@ -13756,6 +13790,20 @@
         .sort(function(a, b) { return a.fy - b.fy; });
     }
 
+    function getSeries(data, key) {
+      var arr = key === 'fcf' ? computeFCF(data) : (data[key] || []);
+      return arr.slice(-5);
+    }
+
+    // Align two series to the same year axis (uses the union of years, missing = null)
+    function alignSeries(primary, secondary) {
+      var years = primary.map(function(p){ return p.fy });
+      var map2 = {};
+      (secondary || []).forEach(function(p){ map2[p.fy] = p.val });
+      var lineVals = years.map(function(y){ return map2[y] == null ? null : map2[y] });
+      return { years: years, bars: primary.map(function(p){ return p.val }), line: lineVals };
+    }
+
     function fmtB(val) {
       if (val == null || !isFinite(val)) return '–';
       var b = val / 1e9;
@@ -13773,17 +13821,18 @@
       return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
     }
 
-    function drawChart(canvas, series, color) {
+    function drawCombo(canvas, aligned, color, hasLine) {
       var ctx = canvas.getContext('2d');
       var dpr = window.devicePixelRatio || 1;
-      var cssW = canvas.clientWidth || 300;
-      var cssH = canvas.clientHeight || 160;
+      var cssW = canvas.clientWidth || 280;
+      var cssH = canvas.clientHeight || 120;
       canvas.width = cssW * dpr;
       canvas.height = cssH * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, cssW, cssH);
 
-      if (!series || !series.length) {
+      var bars = aligned.bars, line = aligned.line, years = aligned.years;
+      if (!bars.length) {
         ctx.fillStyle = 'rgba(255,255,255,.3)';
         ctx.font = '11px Inter, sans-serif';
         ctx.textAlign = 'center';
@@ -13791,38 +13840,43 @@
         return;
       }
 
-      var padL = 6, padR = 6, padT = 20, padB = 18;
+      var padL = 4, padR = 4, padT = 16, padB = 16;
       var chartW = cssW - padL - padR;
       var chartH = cssH - padT - padB;
 
-      var vals = series.map(function(s){ return s.val });
-      var max = Math.max.apply(null, vals.concat(0));
-      var min = Math.min.apply(null, vals.concat(0));
+      // Combined value range (bars + line)
+      var allVals = bars.slice();
+      if (hasLine) line.forEach(function(v){ if (v != null) allVals.push(v); });
+      var max = Math.max.apply(null, allVals.concat(0));
+      var min = Math.min.apply(null, allVals.concat(0));
       var range = max - min;
       if (range === 0) range = Math.abs(max) || 1;
 
-      var n = series.length;
-      var gap = 10;
-      var barW = (chartW - gap * (n - 1)) / n;
+      var n = bars.length;
+      var gap = 6;
+      var barW = Math.max(8, (chartW - gap * (n - 1)) / n);
 
       var zeroY = padT + (max / range) * chartH;
 
-      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      // Baseline
+      ctx.strokeStyle = 'rgba(255,255,255,.07)';
       ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.moveTo(padL, zeroY);
       ctx.lineTo(cssW - padR, zeroY);
       ctx.stroke();
 
-      series.forEach(function(s, i) {
+      // Bars
+      var barCenters = [];
+      bars.forEach(function(v, i) {
         var x = padL + i * (barW + gap);
-        var h = Math.abs(s.val / range) * chartH;
-        var y = s.val >= 0 ? zeroY - h : zeroY;
+        var h = Math.abs((v || 0) / range) * chartH;
+        var y = (v || 0) >= 0 ? zeroY - h : zeroY;
         var isLast = i === n - 1;
 
         var grad = ctx.createLinearGradient(0, y, 0, y + h);
-        grad.addColorStop(0, isLast ? color : hexA(color, .55));
-        grad.addColorStop(1, isLast ? hexA(color, .7) : hexA(color, .25));
+        grad.addColorStop(0, isLast ? color : hexA(color, .5));
+        grad.addColorStop(1, isLast ? hexA(color, .65) : hexA(color, .2));
         ctx.fillStyle = grad;
 
         var r = Math.min(3, barW/2, h/2);
@@ -13836,16 +13890,81 @@
         ctx.closePath();
         ctx.fill();
 
-        ctx.fillStyle = isLast ? '#ffffff' : 'rgba(255,255,255,.55)';
-        ctx.font = (isLast ? '600 ' : '') + '10px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        var labelY = s.val >= 0 ? y - 5 : y + h + 12;
-        ctx.fillText(fmtB(s.val), x + barW/2, labelY);
+        barCenters.push(x + barW/2);
 
-        ctx.fillStyle = 'rgba(255,255,255,.4)';
-        ctx.font = '10px Inter, sans-serif';
-        ctx.fillText("'" + String(s.fy).slice(-2), x + barW/2, cssH - 4);
+        // Year label
+        ctx.fillStyle = isLast ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.4)';
+        ctx.font = (isLast ? '600 ' : '') + '9.5px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText("'" + String(years[i]).slice(-2), x + barW/2, cssH - 3);
       });
+
+      // Latest bar value label (only on top of last bar)
+      var lastIdx = n - 1, lastV = bars[lastIdx];
+      var lastH = Math.abs((lastV || 0) / range) * chartH;
+      var lastY = (lastV || 0) >= 0 ? zeroY - lastH : zeroY;
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 10px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      var labelY = (lastV || 0) >= 0 ? lastY - 4 : lastY + lastH + 11;
+      ctx.fillText(fmtB(lastV), barCenters[lastIdx], labelY);
+
+      // Trend line on top
+      if (hasLine && line.length) {
+        // Use line series (secondary metric) if provided; otherwise trend = bar values themselves
+        var lineY = years.map(function(_, i) {
+          var v = hasLine && aligned.line ? line[i] : bars[i];
+          if (v == null) return null;
+          return zeroY - (v / range) * chartH;
+        });
+
+        // Stroke
+        ctx.strokeStyle = '#fbbf24'; // amber accent line
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        var started = false;
+        for (var i = 0; i < lineY.length; i++) {
+          if (lineY[i] == null) continue;
+          if (!started) { ctx.moveTo(barCenters[i], lineY[i]); started = true; }
+          else ctx.lineTo(barCenters[i], lineY[i]);
+        }
+        ctx.stroke();
+
+        // Dots
+        ctx.fillStyle = '#fbbf24';
+        for (var j = 0; j < lineY.length; j++) {
+          if (lineY[j] == null) continue;
+          ctx.beginPath();
+          ctx.arc(barCenters[j], lineY[j], 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    function buildHead(sym, group, primarySeries, secondarySeries) {
+      var lastP = primarySeries[primarySeries.length - 1];
+      var prevP = primarySeries[primarySeries.length - 2];
+      var yoyHTML = '';
+      if (lastP && prevP && prevP.val !== 0) {
+        var pct = ((lastP.val - prevP.val) / Math.abs(prevP.val)) * 100;
+        var cls = pct >= 0 ? 'up' : 'dn';
+        var sign = pct >= 0 ? '+' : '';
+        yoyHTML = '<span class="yoy ' + cls + '">' + sign + pct.toFixed(1) + '%</span>';
+      }
+      var primText = lastP ? '<span class="val">' + fmtB(lastP.val) + '</span> FY' + lastP.fy : '–';
+      var secText = '';
+      if (group.line) {
+        var lastS = secondarySeries[secondarySeries.length - 1];
+        if (lastS) {
+          secText = '<span class="fin-line-dot"></span>'
+            + group.line.label + ' <span class="val">' + fmtB(lastS.val) + '</span>';
+        }
+      }
+      return '<div class="fin-chart-head">'
+        + '<div class="fin-chart-title">' + group.title + '</div>'
+        + '<div class="fin-chart-latest">' + primText + yoyHTML + '</div>'
+        + '</div>'
+        + (secText ? '<div class="fin-chart-sub">' + secText + '</div>' : '');
     }
 
     function renderForSymbol(sym, data) {
@@ -13853,33 +13972,22 @@
       if (!wrap) return;
       var color = wrap.dataset.finColor || '#06b6d4';
 
-      var seriesMap = {};
-      METRICS.forEach(function(m) {
-        var arr = m.key === 'fcf' ? computeFCF(data) : (data[m.key] || []);
-        seriesMap[m.key] = arr.slice(-5);
+      var alignedMap = {};
+      var primaryMap = {};
+      var secondaryMap = {};
+      GROUPS.forEach(function(g) {
+        var primary = getSeries(data, g.bars.key);
+        var secondary = g.line ? getSeries(data, g.line.key) : [];
+        primaryMap[g.id] = primary;
+        secondaryMap[g.id] = secondary;
+        alignedMap[g.id] = alignSeries(primary, secondary);
       });
 
       var html = '';
-      METRICS.forEach(function(m) {
-        var s = seriesMap[m.key];
-        var last = s[s.length - 1];
-        var prev = s[s.length - 2];
-        var yoyHTML = '';
-        if (last && prev && prev.val !== 0) {
-          var pct = ((last.val - prev.val) / Math.abs(prev.val)) * 100;
-          var cls = pct >= 0 ? 'up' : 'dn';
-          var sign = pct >= 0 ? '+' : '';
-          yoyHTML = '<span class="yoy ' + cls + '">' + sign + pct.toFixed(1) + '%</span>';
-        }
-        var valText = last ? fmtB(last.val) : '–';
-        var fyText = last ? ' FY' + last.fy : '';
-        html += '<div class="fin-chart-card">'
-          + '<div class="fin-chart-head">'
-          +   '<div class="fin-chart-title">' + m.label + '</div>'
-          +   '<div class="fin-chart-latest"><span class="val">' + valText + '</span>'
-          +     fyText + yoyHTML + '</div>'
-          + '</div>'
-          + '<canvas class="fin-chart-canvas" data-metric="' + m.key + '"></canvas>'
+      GROUPS.forEach(function(g) {
+        html += '<div class="fin-chart-card" data-group="' + g.id + '">'
+          + buildHead(sym, g, primaryMap[g.id], secondaryMap[g.id])
+          + '<canvas class="fin-chart-canvas" data-group="' + g.id + '"></canvas>'
           + '</div>';
       });
 
@@ -13896,7 +14004,9 @@
       if (meta) meta.textContent = 'Live · ' + sourceLabel.toUpperCase();
 
       wrap.querySelectorAll('canvas.fin-chart-canvas').forEach(function(canvas) {
-        drawChart(canvas, seriesMap[canvas.dataset.metric], color);
+        var gid = canvas.dataset.group;
+        var grp = GROUPS.find(function(x){ return x.id === gid });
+        drawCombo(canvas, alignedMap[gid], color, !!grp.line);
       });
     }
 

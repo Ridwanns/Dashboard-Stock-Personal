@@ -97,24 +97,24 @@ async function fetchEDGAR(cik) {
 }
 
 // Pull annual USD values from XBRL fact tree.
+// Merges across ALL candidate concepts — companies switch XBRL tags over time
+// (e.g. MU uses Revenues for old years, RevenueFromContractWithCustomerExcludingAssessedTax for recent).
 function extractAnnualUSD(facts, candidates) {
+  const byYear = new Map();
   for (const key of candidates) {
     const units = safeGet(facts, key + '.units.USD', null);
     if (!Array.isArray(units) || units.length === 0) continue;
-    // Filter annual (10-K) entries.
     const annual = units.filter((u) => u.fp === 'FY' && u.form === '10-K' && isFinite(u.val));
-    if (annual.length === 0) continue;
-    // Dedupe by fiscal year, keep latest filing.
-    const byYear = new Map();
     for (const u of annual) {
-      const y = u.fy;
-      const prev = byYear.get(y);
-      if (!prev || (u.filed && prev.filed && u.filed > prev.filed)) byYear.set(y, u);
+      const prev = byYear.get(u.fy);
+      if (!prev || (u.filed && prev.filed && u.filed > prev.filed)) {
+        byYear.set(u.fy, u);
+      }
     }
-    const sorted = Array.from(byYear.values()).sort((a, b) => a.fy - b.fy);
-    return sorted.slice(-5).map((u) => ({ fy: u.fy, val: u.val, end: u.end }));
   }
-  return [];
+  if (byYear.size === 0) return [];
+  const sorted = Array.from(byYear.values()).sort((a, b) => a.fy - b.fy);
+  return sorted.slice(-5).map((u) => ({ fy: u.fy, val: u.val, end: u.end }));
 }
 
 function latestPoint(facts, candidates) {
