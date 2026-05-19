@@ -1343,6 +1343,112 @@
     html, body { overflow-x: hidden }
     body { -webkit-text-size-adjust: 100%; text-size-adjust: 100% }
 
+    /* ═══ FINANCIAL BAR CHARTS ═══ */
+    .fin-charts-wrap {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    .fin-chart-card {
+      background: rgba(255,255,255,.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+    }
+    .fin-chart-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+    .fin-chart-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+    .fin-chart-latest {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .fin-chart-latest .val {
+      color: var(--text);
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    .fin-chart-latest .yoy {
+      display: inline-block;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+    }
+    .fin-chart-latest .yoy.up { color: #10b981; background: rgba(16,185,129,.12) }
+    .fin-chart-latest .yoy.dn { color: #ef4444; background: rgba(239,68,68,.12) }
+    .fin-chart-canvas {
+      width: 100%;
+      height: 160px;
+      display: block;
+    }
+    .fin-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .fin-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 380px;
+      color: var(--muted);
+      font-size: 12px;
+      flex-direction: column;
+      gap: 12px;
+      grid-column: 1 / -1;
+    }
+    .fin-loading-spinner {
+      width: 28px; height: 28px;
+      border: 2px solid var(--glass-border);
+      border-top-color: var(--accent2);
+      border-radius: 50%;
+      animation: fin-spin .8s linear infinite;
+    }
+    @keyframes fin-spin { to { transform: rotate(360deg) } }
+    .fin-error {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 12px;
+      grid-column: 1 / -1;
+    }
+    .fin-error button {
+      margin-top: 12px;
+      padding: 6px 14px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-main);
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .fin-error button:hover { background: rgba(255,255,255,.08) }
+    @media(max-width:768px) {
+      .fin-charts-wrap { grid-template-columns: 1fr; gap: 10px }
+      .fin-chart-canvas { height: 140px }
+      .fin-chart-title { font-size: 11px }
+      .fin-chart-latest { font-size: 10.5px }
+    }
+
     /* ═══ IFRAME SKELETON LOADER ═══ */
     .tv-wrap, .tradingview-widget-container {
       position: relative;
@@ -3545,14 +3651,14 @@
                 </div>
               </div>
             </div>
-            <div class="card" style="margin-top:16px;height:520px">
+            <div class="card" style="margin-top:16px">
               <div class="card-head">
-                <div class="card-title">Financials Snapshot</div>
+                <div class="card-title">MU Financials &mdash; 5-Year History (Annual)</div>
+                <div class="card-meta" data-fin-source="MU" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
               </div>
-              <div class="tv-wrap" style="height:470px">
-                <div class="tradingview-widget-container" style="height:470px;width:100%">
-                  <div class="tradingview-widget-container__widget" style="height:470px;width:100%"></div>
-                  <div class="tv-lazy" data-tv-type="financials" data-tv-config="{&quot;symbol&quot;:&quot;NASDAQ:MU&quot;,&quot;colorTheme&quot;:&quot;dark&quot;,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:470}" data-tv-height="470" data-tv-load="lazy" style="width:100%;height:470px;position:relative;background:linear-gradient(135deg,rgba(139,92,246,.03),rgba(139,92,246,.01));border-radius:inherit;overflow:hidden"></div>
+              <div class="card-body">
+                <div class="fin-charts-wrap" data-fin-symbol="MU" data-fin-color="#8b5cf6">
+                  <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
                 </div>
               </div>
             </div>
@@ -5109,14 +5215,14 @@
                 </div>
               </div>
             </div>
-            <div class="card" style="margin-top:16px;height:520px">
+            <div class="card" style="margin-top:16px">
               <div class="card-head">
-                <div class="card-title">AMD Financials Snapshot</div>
+                <div class="card-title">AMD Financials &mdash; 5-Year History (Annual)</div>
+                <div class="card-meta" data-fin-source="AMD" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
               </div>
-              <div class="tv-wrap" style="height:470px">
-                <div class="tradingview-widget-container" style="height:470px;width:100%">
-                  <div class="tradingview-widget-container__widget" style="height:470px;width:100%"></div>
-                  <div class="tv-lazy" data-tv-type="financials" data-tv-config="{&quot;symbol&quot;:&quot;NASDAQ:AMD&quot;,&quot;colorTheme&quot;:&quot;dark&quot;,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:470}" data-tv-height="470" data-tv-load="lazy" style="width:100%;height:470px;position:relative;background:linear-gradient(135deg,rgba(139,92,246,.03),rgba(139,92,246,.01));border-radius:inherit;overflow:hidden"></div>
+              <div class="card-body">
+                <div class="fin-charts-wrap" data-fin-symbol="AMD" data-fin-color="#ef4444">
+                  <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
                 </div>
               </div>
             </div>
@@ -6641,14 +6747,14 @@
                 </div>
               </div>
             </div>
-            <div class="card" style="margin-top:16px;height:520px">
+            <div class="card" style="margin-top:16px">
               <div class="card-head">
-                <div class="card-title">NVDA Financials Snapshot</div>
+                <div class="card-title">NVDA Financials &mdash; 5-Year History (Annual)</div>
+                <div class="card-meta" data-fin-source="NVDA" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
               </div>
-              <div class="tv-wrap" style="height:470px">
-                <div class="tradingview-widget-container" style="height:470px;width:100%">
-                  <div class="tradingview-widget-container__widget" style="height:470px;width:100%"></div>
-                  <div class="tv-lazy" data-tv-type="financials" data-tv-config="{&quot;symbol&quot;:&quot;NASDAQ:NVDA&quot;,&quot;colorTheme&quot;:&quot;dark&quot;,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:470}" data-tv-height="470" data-tv-load="lazy" style="width:100%;height:470px;position:relative;background:linear-gradient(135deg,rgba(139,92,246,.03),rgba(139,92,246,.01));border-radius:inherit;overflow:hidden"></div>
+              <div class="card-body">
+                <div class="fin-charts-wrap" data-fin-symbol="NVDA" data-fin-color="#10b981">
+                  <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
                 </div>
               </div>
             </div>
@@ -8231,14 +8337,14 @@
                 </div>
               </div>
             </div>
-            <div class="card" style="margin-top:16px;height:520px">
+            <div class="card" style="margin-top:16px">
               <div class="card-head">
-                <div class="card-title">TSM Financials Snapshot</div>
+                <div class="card-title">TSM Financials &mdash; 5-Year History (Annual)</div>
+                <div class="card-meta" data-fin-source="TSM" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
               </div>
-              <div class="tv-wrap" style="height:470px">
-                <div class="tradingview-widget-container" style="height:470px;width:100%">
-                  <div class="tradingview-widget-container__widget" style="height:470px;width:100%"></div>
-                  <div class="tv-lazy" data-tv-type="financials" data-tv-config="{&quot;symbol&quot;:&quot;NYSE:TSM&quot;,&quot;colorTheme&quot;:&quot;dark&quot;,&quot;isTransparent&quot;:true,&quot;displayMode&quot;:&quot;regular&quot;,&quot;locale&quot;:&quot;en&quot;,&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:470}" data-tv-height="470" data-tv-load="lazy" style="width:100%;height:470px;position:relative;background:linear-gradient(135deg,rgba(139,92,246,.03),rgba(139,92,246,.01));border-radius:inherit;overflow:hidden"></div>
+              <div class="card-body">
+                <div class="fin-charts-wrap" data-fin-symbol="TSM" data-fin-color="#06b6d4">
+                  <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
                 </div>
               </div>
             </div>
@@ -13616,6 +13722,280 @@
   })();
   </script>
 
+  <script>
+  // ── Financial Bar Charts ──
+  // Fetches /api/financials and renders 5 bar charts per stock
+  // (Revenue, Net Income, Gross Profit, EBIT, FCF).
+  (function(){
+    var CACHE_KEY = 'fin-charts-v1';
+    var CACHE_TTL_MS = 6 * 60 * 60 * 1000;
+    var rendered = {};
+
+    var METRICS = [
+      { key: 'revenue',     label: 'Revenue' },
+      { key: 'netIncome',   label: 'Net Income' },
+      { key: 'grossProfit', label: 'Gross Profit' },
+      { key: 'ebit',        label: 'Operating Income' },
+      { key: 'fcf',         label: 'Free Cash Flow' }
+    ];
+
+    function computeFCF(data) {
+      var byYear = {};
+      var add = function(arr, sign) {
+        (arr || []).forEach(function(p) {
+          if (byYear[p.fy] == null) byYear[p.fy] = 0;
+          byYear[p.fy] += sign * (p.val || 0);
+        });
+      };
+      add(data.netIncome, 1);
+      add(data.da, 1);
+      add(data.capex, -1);
+      add(data.wcChange, -1);
+      return Object.keys(byYear)
+        .map(function(fy) { return { fy: +fy, val: byYear[fy] }; })
+        .sort(function(a, b) { return a.fy - b.fy; });
+    }
+
+    function fmtB(val) {
+      if (val == null || !isFinite(val)) return '–';
+      var b = val / 1e9;
+      var sign = b < 0 ? '-' : '';
+      var ab = Math.abs(b);
+      if (ab >= 100) return sign + ab.toFixed(0) + 'B';
+      if (ab >= 10)  return sign + ab.toFixed(1) + 'B';
+      return sign + ab.toFixed(2) + 'B';
+    }
+
+    function hexA(hex, alpha) {
+      var r = parseInt(hex.slice(1,3), 16);
+      var g = parseInt(hex.slice(3,5), 16);
+      var b = parseInt(hex.slice(5,7), 16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+    }
+
+    function drawChart(canvas, series, color) {
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      var cssW = canvas.clientWidth || 300;
+      var cssH = canvas.clientHeight || 160;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      if (!series || !series.length) {
+        ctx.fillStyle = 'rgba(255,255,255,.3)';
+        ctx.font = '11px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data', cssW / 2, cssH / 2);
+        return;
+      }
+
+      var padL = 6, padR = 6, padT = 20, padB = 18;
+      var chartW = cssW - padL - padR;
+      var chartH = cssH - padT - padB;
+
+      var vals = series.map(function(s){ return s.val });
+      var max = Math.max.apply(null, vals.concat(0));
+      var min = Math.min.apply(null, vals.concat(0));
+      var range = max - min;
+      if (range === 0) range = Math.abs(max) || 1;
+
+      var n = series.length;
+      var gap = 10;
+      var barW = (chartW - gap * (n - 1)) / n;
+
+      var zeroY = padT + (max / range) * chartH;
+
+      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, zeroY);
+      ctx.lineTo(cssW - padR, zeroY);
+      ctx.stroke();
+
+      series.forEach(function(s, i) {
+        var x = padL + i * (barW + gap);
+        var h = Math.abs(s.val / range) * chartH;
+        var y = s.val >= 0 ? zeroY - h : zeroY;
+        var isLast = i === n - 1;
+
+        var grad = ctx.createLinearGradient(0, y, 0, y + h);
+        grad.addColorStop(0, isLast ? color : hexA(color, .55));
+        grad.addColorStop(1, isLast ? hexA(color, .7) : hexA(color, .25));
+        ctx.fillStyle = grad;
+
+        var r = Math.min(3, barW/2, h/2);
+        ctx.beginPath();
+        ctx.moveTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        ctx.lineTo(x + barW - r, y);
+        ctx.quadraticCurveTo(x + barW, y, x + barW, y + r);
+        ctx.lineTo(x + barW, y + h);
+        ctx.lineTo(x, y + h);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = isLast ? '#ffffff' : 'rgba(255,255,255,.55)';
+        ctx.font = (isLast ? '600 ' : '') + '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        var labelY = s.val >= 0 ? y - 5 : y + h + 12;
+        ctx.fillText(fmtB(s.val), x + barW/2, labelY);
+
+        ctx.fillStyle = 'rgba(255,255,255,.4)';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.fillText("'" + String(s.fy).slice(-2), x + barW/2, cssH - 4);
+      });
+    }
+
+    function renderForSymbol(sym, data) {
+      var wrap = document.querySelector('.fin-charts-wrap[data-fin-symbol="' + sym + '"]');
+      if (!wrap) return;
+      var color = wrap.dataset.finColor || '#06b6d4';
+
+      var seriesMap = {};
+      METRICS.forEach(function(m) {
+        var arr = m.key === 'fcf' ? computeFCF(data) : (data[m.key] || []);
+        seriesMap[m.key] = arr.slice(-5);
+      });
+
+      var html = '';
+      METRICS.forEach(function(m) {
+        var s = seriesMap[m.key];
+        var last = s[s.length - 1];
+        var prev = s[s.length - 2];
+        var yoyHTML = '';
+        if (last && prev && prev.val !== 0) {
+          var pct = ((last.val - prev.val) / Math.abs(prev.val)) * 100;
+          var cls = pct >= 0 ? 'up' : 'dn';
+          var sign = pct >= 0 ? '+' : '';
+          yoyHTML = '<span class="yoy ' + cls + '">' + sign + pct.toFixed(1) + '%</span>';
+        }
+        var valText = last ? fmtB(last.val) : '–';
+        var fyText = last ? ' FY' + last.fy : '';
+        html += '<div class="fin-chart-card">'
+          + '<div class="fin-chart-head">'
+          +   '<div class="fin-chart-title">' + m.label + '</div>'
+          +   '<div class="fin-chart-latest"><span class="val">' + valText + '</span>'
+          +     fyText + yoyHTML + '</div>'
+          + '</div>'
+          + '<canvas class="fin-chart-canvas" data-metric="' + m.key + '"></canvas>'
+          + '</div>';
+      });
+
+      var sourceLabel = (data.source || 'live').replace('+', ' + ');
+      var ts = data.ts ? new Date(data.ts) : new Date();
+      html += '<div class="fin-meta" style="grid-column:1/-1">'
+        + '<span>Source: ' + sourceLabel.toUpperCase() + '</span>'
+        + '<span>Updated: ' + ts.toLocaleString() + '</span>'
+        + '</div>';
+
+      wrap.innerHTML = html;
+
+      var meta = document.querySelector('[data-fin-source="' + sym + '"]');
+      if (meta) meta.textContent = 'Live · ' + sourceLabel.toUpperCase();
+
+      wrap.querySelectorAll('canvas.fin-chart-canvas').forEach(function(canvas) {
+        drawChart(canvas, seriesMap[canvas.dataset.metric], color);
+      });
+    }
+
+    function showError(sym, msg) {
+      var wrap = document.querySelector('.fin-charts-wrap[data-fin-symbol="' + sym + '"]');
+      if (!wrap) return;
+      wrap.innerHTML = '<div class="fin-error">'
+        + '<div>Could not load ' + sym + ' financials</div>'
+        + '<div style="font-size:10.5px;opacity:.7;margin-top:6px">' + (msg || '') + '</div>'
+        + '<button type="button" data-fin-retry="' + sym + '">Try again</button>'
+        + '</div>';
+      var meta = document.querySelector('[data-fin-source="' + sym + '"]');
+      if (meta) meta.textContent = 'Offline';
+    }
+
+    function loadCache(sym) {
+      try {
+        var raw = localStorage.getItem(CACHE_KEY + ':' + sym);
+        if (!raw) return null;
+        var obj = JSON.parse(raw);
+        if (!obj || !obj.t || Date.now() - obj.t > CACHE_TTL_MS) return null;
+        return obj.d;
+      } catch(e) { return null; }
+    }
+
+    function saveCache(sym, data) {
+      try { localStorage.setItem(CACHE_KEY + ':' + sym, JSON.stringify({t: Date.now(), d: data})); } catch(e) {}
+    }
+
+    function fetchAndRender(sym, force) {
+      if (rendered[sym] && !force) return;
+      rendered[sym] = true;
+
+      if (!force) {
+        var cached = loadCache(sym);
+        if (cached) { renderForSymbol(sym, cached); return; }
+      }
+
+      fetch('/api/financials?symbol=' + sym)
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .then(function(data) {
+          var hasRev = data && data.revenue && data.revenue.length;
+          var hasNI  = data && data.netIncome && data.netIncome.length;
+          if (!hasRev && !hasNI) throw new Error('Empty response');
+          saveCache(sym, data);
+          renderForSymbol(sym, data);
+        })
+        .catch(function(err) {
+          console.warn('[financials] fetch failed for', sym, err);
+          rendered[sym] = false;
+          showError(sym, err.message || String(err));
+        });
+    }
+
+    function scanActive() {
+      document.querySelectorAll('.fin-charts-wrap[data-fin-symbol]').forEach(function(wrap) {
+        var page = wrap.closest('.sub-page');
+        if (!page || !page.classList.contains('active')) return;
+        var stockSec = wrap.closest('.stock-section');
+        if (stockSec && !stockSec.classList.contains('active')) return;
+        fetchAndRender(wrap.dataset.finSymbol, false);
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      if (t.closest('.snav-btn, .sub-tab, [data-stock][role="tab"]')) {
+        setTimeout(scanActive, 120);
+      }
+      var retry = t.closest('[data-fin-retry]');
+      if (retry) {
+        var sym = retry.getAttribute('data-fin-retry');
+        var wrap = document.querySelector('.fin-charts-wrap[data-fin-symbol="' + sym + '"]');
+        if (wrap) wrap.innerHTML = '<div class="fin-loading"><div class="fin-loading-spinner"></div><div>Retrying&hellip;</div></div>';
+        fetchAndRender(sym, true);
+      }
+    }, true);
+
+    if (document.readyState === 'complete') setTimeout(scanActive, 600);
+    else window.addEventListener('load', function() { setTimeout(scanActive, 600); });
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        document.querySelectorAll('.fin-charts-wrap[data-fin-symbol]').forEach(function(wrap) {
+          if (!wrap.querySelector('canvas')) return;
+          var sym = wrap.dataset.finSymbol;
+          var cached = loadCache(sym);
+          if (cached) renderForSymbol(sym, cached);
+        });
+      }, 200);
+    });
+  })();
+  </script>
 
 </body>
 
