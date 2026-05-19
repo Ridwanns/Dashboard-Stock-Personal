@@ -12618,8 +12618,20 @@
           priceToSales: ynum(sg(qs,'summaryDetail.priceToSalesTrailing12Months')),
           forwardEPS: ynum(sg(qs,'defaultKeyStatistics.forwardEps')),
           trailingEPS: ynum(sg(qs,'defaultKeyStatistics.trailingEps')),
+          priceToBook: ynum(sg(qs,'defaultKeyStatistics.priceToBook')) || ynum(sg(qs,'summaryDetail.priceToBook')),
           targetMeanPrice: ynum(sg(qs,'financialData.targetMeanPrice')),
+          targetHighPrice: ynum(sg(qs,'financialData.targetHighPrice')),
+          targetLowPrice: ynum(sg(qs,'financialData.targetLowPrice')),
+          numberOfAnalystOpinions: ynum(sg(qs,'financialData.numberOfAnalystOpinions')),
           currentPrice: ynum(sg(qs,'financialData.currentPrice')) || ynum(sg(qs,'price.regularMarketPrice')),
+          fiftyTwoWeekHigh: ynum(sg(qs,'summaryDetail.fiftyTwoWeekHigh')),
+          fiftyTwoWeekLow: ynum(sg(qs,'summaryDetail.fiftyTwoWeekLow')),
+          assets:      arr(sg(qs,'balanceSheetHistory.balanceSheetStatements',[]), 'totalAssets'),
+          liabilities: arr(sg(qs,'balanceSheetHistory.balanceSheetStatements',[]), 'totalLiab'),
+          stockholdersEquity: arr(sg(qs,'balanceSheetHistory.balanceSheetStatements',[]), 'totalStockholderEquity'),
+          cfo:         arr(sg(qs,'cashflowStatementHistory.cashflowStatements',[]), 'totalCashFromOperatingActivities'),
+          cfi:         arr(sg(qs,'cashflowStatementHistory.cashflowStatements',[]), 'totalCashflowsFromInvestingActivities'),
+          cff:         arr(sg(qs,'cashflowStatementHistory.cashflowStatements',[]), 'totalCashFromFinancingActivities'),
           earningsTrend: (sg(qs,'earningsTrend.trend',[]) || []).map(function(t){
             return { period: t.period, endDate: t.endDate, growth: ynum(t.growth), epsEstimate: ynum(sg(t,'earningsEstimate.avg')), revEstimate: ynum(sg(t,'revenueEstimate.avg')) };
           }),
@@ -15127,6 +15139,102 @@
   </script>
 
   <script>
+  // ── Client-side FALLBACK for GitHub Pages / offline ──
+  // Mirror of FALLBACK in netlify/functions/financials.js (verified from 10-K PDFs).
+  // Used when both Netlify API and CORS proxies are unavailable.
+  window.__clientFallback = {
+    MU: {
+      symbol:'MU', source:'client-fallback',
+      forwardPE:6.64, trailingPE:32.15, priceToSales:13.22, priceToBook:10.61, evToEbitda:20.78,
+      forwardEPS:102.58, trailingEPS:21.20,
+      targetMeanPrice:612.66, targetHighPrice:1100.00, targetLowPrice:249.00,
+      numberOfAnalystOpinions:41, currentPrice:681.54,
+      fiftyTwoWeekHigh:818.67, fiftyTwoWeekLow:90.93, beta:1.92,
+      cash:9.642e9, debt:14.017e9, sharesOut:1.122e9,
+      revenue:[{fy:2021,val:27.705e9},{fy:2022,val:30.758e9},{fy:2023,val:15.540e9},{fy:2024,val:25.111e9},{fy:2025,val:37.378e9}],
+      netIncome:[{fy:2021,val:5.861e9},{fy:2022,val:8.687e9},{fy:2023,val:-5.833e9},{fy:2024,val:0.778e9},{fy:2025,val:8.539e9}],
+      grossProfit:[{fy:2021,val:10.423e9},{fy:2022,val:13.898e9},{fy:2023,val:-1.416e9},{fy:2024,val:5.613e9},{fy:2025,val:14.873e9}],
+      ebit:[{fy:2021,val:6.283e9},{fy:2022,val:9.702e9},{fy:2023,val:-5.745e9},{fy:2024,val:1.304e9},{fy:2025,val:9.770e9}],
+      capex:[{fy:2021,val:10.030e9},{fy:2022,val:12.067e9},{fy:2023,val:7.676e9},{fy:2024,val:8.386e9},{fy:2025,val:15.857e9}],
+      da:[{fy:2021,val:6.214e9},{fy:2022,val:7.116e9},{fy:2023,val:7.756e9},{fy:2024,val:7.780e9},{fy:2025,val:8.352e9}],
+      wcChange:[{fy:2021,val:-0.440e9},{fy:2022,val:-1.263e9},{fy:2023,val:-2.892e9},{fy:2024,val:-1.165e9},{fy:2025,val:-0.666e9}],
+      assets:[{fy:2021,val:58.849e9},{fy:2022,val:66.283e9},{fy:2023,val:64.254e9},{fy:2024,val:69.416e9},{fy:2025,val:82.798e9}],
+      liabilities:[{fy:2021,val:14.916e9},{fy:2022,val:16.376e9},{fy:2023,val:19.804e9},{fy:2024,val:24.285e9},{fy:2025,val:28.633e9}],
+      stockholdersEquity:[{fy:2021,val:43.933e9},{fy:2022,val:49.907e9},{fy:2023,val:44.450e9},{fy:2024,val:45.131e9},{fy:2025,val:54.165e9}],
+      cfo:[{fy:2021,val:12.468e9},{fy:2022,val:15.181e9},{fy:2023,val:1.559e9},{fy:2024,val:8.507e9},{fy:2025,val:17.525e9}],
+      cfi:[{fy:2021,val:-10.589e9},{fy:2022,val:-11.585e9},{fy:2023,val:-6.191e9},{fy:2024,val:-8.309e9},{fy:2025,val:-14.087e9}],
+      cff:[{fy:2021,val:-1.781e9},{fy:2022,val:-2.980e9},{fy:2023,val:4.983e9},{fy:2024,val:-1.842e9},{fy:2025,val:-0.850e9}],
+    },
+    AMD: {
+      symbol:'AMD', source:'client-fallback',
+      forwardPE:32.50, trailingPE:140.80, priceToSales:18.33, priceToBook:10.65, evToEbitda:91.25,
+      forwardEPS:12.95, trailingEPS:2.99,
+      targetMeanPrice:460.79, targetHighPrice:625.00, targetLowPrice:225.00,
+      numberOfAnalystOpinions:48, currentPrice:420.99,
+      fiftyTwoWeekHigh:469.22, fiftyTwoWeekLow:107.67, beta:2.40,
+      cash:5.585e9, debt:2.997e9, sharesOut:1.631e9,
+      revenue:[{fy:2021,val:16.434e9},{fy:2022,val:23.601e9},{fy:2023,val:22.680e9},{fy:2024,val:25.785e9},{fy:2025,val:34.639e9}],
+      netIncome:[{fy:2021,val:3.162e9},{fy:2022,val:1.320e9},{fy:2023,val:0.854e9},{fy:2024,val:1.641e9},{fy:2025,val:4.335e9}],
+      grossProfit:[{fy:2021,val:7.929e9},{fy:2022,val:10.603e9},{fy:2023,val:10.460e9},{fy:2024,val:12.725e9},{fy:2025,val:17.152e9}],
+      ebit:[{fy:2021,val:3.648e9},{fy:2022,val:1.264e9},{fy:2023,val:0.401e9},{fy:2024,val:1.900e9},{fy:2025,val:3.694e9}],
+      capex:[{fy:2021,val:0.301e9},{fy:2022,val:0.450e9},{fy:2023,val:0.546e9},{fy:2024,val:0.636e9},{fy:2025,val:0.762e9}],
+      da:[{fy:2021,val:0.407e9},{fy:2022,val:4.174e9},{fy:2023,val:4.561e9},{fy:2024,val:4.197e9},{fy:2025,val:3.964e9}],
+      wcChange:[{fy:2021,val:-0.20e9},{fy:2022,val:0.50e9},{fy:2023,val:-0.30e9},{fy:2024,val:0.20e9},{fy:2025,val:0.50e9}],
+      assets:[{fy:2021,val:12.426e9},{fy:2022,val:67.580e9},{fy:2023,val:67.885e9},{fy:2024,val:69.226e9},{fy:2025,val:76.926e9}],
+      liabilities:[{fy:2021,val:5.110e9},{fy:2022,val:13.062e9},{fy:2023,val:11.402e9},{fy:2024,val:11.804e9},{fy:2025,val:13.927e9}],
+      stockholdersEquity:[{fy:2021,val:7.316e9},{fy:2022,val:54.518e9},{fy:2023,val:56.483e9},{fy:2024,val:57.422e9},{fy:2025,val:62.999e9}],
+      cfo:[{fy:2021,val:3.521e9},{fy:2022,val:3.565e9},{fy:2023,val:1.668e9},{fy:2024,val:3.487e9},{fy:2025,val:6.454e9}],
+      cfi:[{fy:2021,val:-0.918e9},{fy:2022,val:-0.342e9},{fy:2023,val:-1.396e9},{fy:2024,val:-1.205e9},{fy:2025,val:-1.530e9}],
+      cff:[{fy:2021,val:-0.045e9},{fy:2022,val:-3.215e9},{fy:2023,val:-0.342e9},{fy:2024,val:-1.519e9},{fy:2025,val:-2.310e9}],
+    },
+    NVDA: {
+      symbol:'NVDA', source:'client-fallback',
+      forwardPE:19.56, trailingPE:45.46, priceToSales:24.94, priceToBook:34.35, evToEbitda:40.16,
+      forwardEPS:11.37, trailingEPS:4.89,
+      targetMeanPrice:275.31, targetHighPrice:380.00, targetLowPrice:140.00,
+      numberOfAnalystOpinions:57, currentPrice:222.32,
+      fiftyTwoWeekHigh:236.54, fiftyTwoWeekLow:129.16, beta:2.24,
+      cash:10.605e9, debt:9.812e9, sharesOut:24.304e9,
+      revenue:[{fy:2022,val:26.914e9},{fy:2023,val:26.974e9},{fy:2024,val:60.922e9},{fy:2025,val:130.497e9},{fy:2026,val:215.938e9}],
+      netIncome:[{fy:2022,val:9.752e9},{fy:2023,val:4.368e9},{fy:2024,val:29.760e9},{fy:2025,val:72.880e9},{fy:2026,val:120.067e9}],
+      grossProfit:[{fy:2022,val:17.475e9},{fy:2023,val:15.356e9},{fy:2024,val:44.301e9},{fy:2025,val:97.858e9},{fy:2026,val:153.463e9}],
+      ebit:[{fy:2022,val:10.041e9},{fy:2023,val:4.224e9},{fy:2024,val:32.972e9},{fy:2025,val:81.453e9},{fy:2026,val:130.387e9}],
+      capex:[{fy:2022,val:0.976e9},{fy:2023,val:1.069e9},{fy:2024,val:1.069e9},{fy:2025,val:3.236e9},{fy:2026,val:6.042e9}],
+      da:[{fy:2022,val:1.174e9},{fy:2023,val:1.508e9},{fy:2024,val:1.508e9},{fy:2025,val:1.864e9},{fy:2026,val:2.843e9}],
+      wcChange:[{fy:2022,val:-2.6e9},{fy:2023,val:-0.8e9},{fy:2024,val:-2.3e9},{fy:2025,val:-5.0e9},{fy:2026,val:-15.0e9}],
+      assets:[{fy:2022,val:44.187e9},{fy:2023,val:41.182e9},{fy:2024,val:65.728e9},{fy:2025,val:111.601e9},{fy:2026,val:206.803e9}],
+      liabilities:[{fy:2022,val:17.575e9},{fy:2023,val:19.081e9},{fy:2024,val:22.750e9},{fy:2025,val:32.274e9},{fy:2026,val:49.510e9}],
+      stockholdersEquity:[{fy:2022,val:26.612e9},{fy:2023,val:22.101e9},{fy:2024,val:42.978e9},{fy:2025,val:79.327e9},{fy:2026,val:157.293e9}],
+      cfo:[{fy:2022,val:9.108e9},{fy:2023,val:5.641e9},{fy:2024,val:28.090e9},{fy:2025,val:64.089e9},{fy:2026,val:102.718e9}],
+      cfi:[{fy:2022,val:-9.830e9},{fy:2023,val:-1.218e9},{fy:2024,val:-10.566e9},{fy:2025,val:-20.421e9},{fy:2026,val:-52.228e9}],
+      cff:[{fy:2022,val:-1.250e9},{fy:2023,val:-11.617e9},{fy:2024,val:-13.633e9},{fy:2025,val:-42.359e9},{fy:2026,val:-48.474e9}],
+    },
+    TSM: {
+      symbol:'TSM', source:'client-fallback',
+      forwardPE:20.29, trailingPE:34.02, priceToSales:0.50, priceToBook:87.63, evToEbitda:2.81,
+      forwardEPS:19.52, trailingEPS:11.64,
+      targetMeanPrice:467.84, targetHighPrice:600.00, targetLowPrice:354.00,
+      numberOfAnalystOpinions:18, currentPrice:395.95,
+      fiftyTwoWeekHigh:421.97, fiftyTwoWeekLow:190.03, beta:1.26,
+      cash:94.674e9, debt:32.0e9, sharesOut:5.189e9,
+      revenue:[{fy:2021,val:56.823e9},{fy:2022,val:75.881e9},{fy:2023,val:69.298e9},{fy:2024,val:90.448e9},{fy:2025,val:126.968e9}],
+      netIncome:[{fy:2021,val:21.347e9},{fy:2022,val:34.060e9},{fy:2023,val:26.882e9},{fy:2024,val:36.638e9},{fy:2025,val:57.181e9}],
+      grossProfit:[{fy:2021,val:28.812e9},{fy:2022,val:45.428e9},{fy:2023,val:36.701e9},{fy:2024,val:50.761e9},{fy:2025,val:76.043e9}],
+      ebit:[{fy:2021,val:23.297e9},{fy:2022,val:38.504e9},{fy:2023,val:29.770e9},{fy:2024,val:41.314e9},{fy:2025,val:64.536e9}],
+      capex:[{fy:2021,val:30.001e9},{fy:2022,val:36.288e9},{fy:2023,val:30.452e9},{fy:2024,val:29.823e9},{fy:2025,val:39.984e9}],
+      da:[{fy:2021,val:14.692e9},{fy:2022,val:16.654e9},{fy:2023,val:18.319e9},{fy:2024,val:20.625e9},{fy:2025,val:23.510e9}],
+      wcChange:[{fy:2021,val:-1.8e9},{fy:2022,val:-3.2e9},{fy:2023,val:1.5e9},{fy:2024,val:-2.5e9},{fy:2025,val:-4.0e9}],
+      assets:[{fy:2021,val:90.500e9},{fy:2022,val:113.621e9},{fy:2023,val:140.323e9},{fy:2024,val:209.123e9},{fy:2025,val:250.649e9}],
+      liabilities:[{fy:2021,val:24.781e9},{fy:2022,val:35.143e9},{fy:2023,val:47.524e9},{fy:2024,val:74.011e9},{fy:2025,val:78.105e9}],
+      stockholdersEquity:[{fy:2021,val:65.708e9},{fy:2022,val:78.487e9},{fy:2023,val:92.799e9},{fy:2024,val:135.137e9},{fy:2025,val:172.567e9}],
+      cfo:[{fy:2021,val:40.063e9},{fy:2022,val:54.124e9},{fy:2023,val:48.215e9},{fy:2024,val:57.770e9},{fy:2025,val:82.380e9}],
+      cfi:[{fy:2021,val:-30.082e9},{fy:2022,val:-36.354e9},{fy:2023,val:-30.681e9},{fy:2024,val:-39.530e9},{fy:2025,val:-39.245e9}],
+      cff:[{fy:2021,val:-7.530e9},{fy:2022,val:-9.560e9},{fy:2023,val:-9.770e9},{fy:2024,val:-12.520e9},{fy:2025,val:-13.852e9}],
+    }
+  };
+  </script>
+
+  <script>
   // ── Financial Bar+Line Charts ──
   // Fetches /api/financials and renders 3 combined panels per stock:
   //  1. Revenue (bars) + Net Income (line)
@@ -15539,11 +15647,7 @@
         if (cached) { renderForSymbol(sym, cached); return; }
       }
 
-      fetch('/api/financials?symbol=' + sym)
-        .then(function(r) {
-          if (!r.ok) throw new Error('HTTP ' + r.status);
-          return r.json();
-        })
+      cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           var hasRev = data && data.revenue && data.revenue.length;
           var hasNI  = data && data.netIncome && data.netIncome.length;
@@ -15553,6 +15657,14 @@
         })
         .catch(function(err) {
           console.warn('[financials] fetch failed for', sym, err);
+          // Try client-side fallback before giving up
+          var fb = window.__clientFallback && window.__clientFallback[sym];
+          if (fb) {
+            console.log('[financials] using client fallback for', sym);
+            saveCache(sym, fb);
+            renderForSymbol(sym, fb);
+            return;
+          }
           rendered[sym] = false;
           showError(sym, err.message || String(err));
         });
@@ -15964,15 +16076,21 @@
       var cached = window.__finDataCache && window.__finDataCache.get(sym);
       if (cached) { renderAll(sym, cached); return; }
 
-      // Fallback: fetch ourselves (shouldn't happen if main charts loaded first)
-      fetch('/api/financials?symbol=' + sym)
-        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      // Fetch via resilientApi chain (CORS proxies on GitHub Pages)
+      cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           if (window.__finDataCache) window.__finDataCache.set(sym, data);
           renderAll(sym, data);
         })
         .catch(function(err){
           console.warn('[fin-extras] fetch fail', sym, err);
+          // Try client-side fallback before showing error
+          var fb = window.__clientFallback && window.__clientFallback[sym];
+          if (fb) {
+            console.log('[fin-extras] using client fallback for', sym);
+            renderAll(sym, fb);
+            return;
+          }
           rendered[sym] = false;
           var symValDisplay = document.querySelector('.val-display[data-val-symbol="' + sym + '"]');
           if (symValDisplay) symValDisplay.innerHTML = '<div class="fin-error" style="padding:30px"><div>Could not load data</div></div>';
