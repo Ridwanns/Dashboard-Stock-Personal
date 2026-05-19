@@ -1477,6 +1477,270 @@
       .fin-chart-latest { font-size: 10px }
     }
 
+    /* ═══ VALUATION TABS ═══ */
+    .val-tabs {
+      display: flex;
+      gap: 6px;
+      background: rgba(255,255,255,.03);
+      padding: 4px;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .val-tabs::-webkit-scrollbar { display: none }
+    .val-tab {
+      flex: 1;
+      min-width: 78px;
+      padding: 7px 10px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: var(--font-main);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .3px;
+      border-radius: 6px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all .2s;
+    }
+    .val-tab:hover { color: var(--text); background: rgba(255,255,255,.04) }
+    .val-tab.active {
+      color: var(--text);
+      background: rgba(255,255,255,.08);
+      box-shadow: 0 1px 8px rgba(0,0,0,.2);
+    }
+    .val-display { min-height: 140px }
+    .val-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 16px 8px 8px;
+    }
+    .val-cell { text-align: center }
+    .val-label {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+    }
+    .val-num {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+      font-family: var(--font-mono, var(--font-main));
+    }
+    .val-num.na { color: var(--muted); font-size: 18px }
+    .val-percentile {
+      margin: 14px 4px 0;
+      padding-top: 14px;
+      border-top: 1px solid var(--glass-border);
+    }
+    .val-perc-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .val-perc-bar {
+      height: 6px;
+      background: linear-gradient(90deg, #10b981 0%, #fbbf24 50%, #ef4444 100%);
+      border-radius: 3px;
+      position: relative;
+    }
+    .val-perc-marker {
+      position: absolute;
+      top: -3px;
+      width: 4px;
+      height: 12px;
+      background: #ffffff;
+      border-radius: 2px;
+      box-shadow: 0 0 8px rgba(255,255,255,.6);
+      transform: translateX(-50%);
+    }
+    .val-perc-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    @media(max-width:480px) {
+      .val-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 12px 4px 4px }
+      .val-num { font-size: 18px }
+      .val-tab { font-size: 10px; padding: 6px 8px; min-width: 64px }
+    }
+
+    /* ═══ ANALYST PRICE TARGETS ═══ */
+    .target-display { padding: 8px 4px }
+    .target-summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .target-summary .label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .target-summary .label strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+    .target-summary .upside {
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .target-summary .upside.up { color: #10b981; background: rgba(16,185,129,.12) }
+    .target-summary .upside.dn { color: #ef4444; background: rgba(239,68,68,.12) }
+    .target-bar-wrap { padding: 32px 12px 8px; position: relative }
+    .target-bar {
+      height: 8px;
+      background: linear-gradient(90deg, #ef4444 0%, #fbbf24 50%, #10b981 100%);
+      border-radius: 4px;
+      position: relative;
+    }
+    .target-marker {
+      position: absolute;
+      transform: translateX(-50%);
+    }
+    .target-marker.avg {
+      top: -28px;
+      color: #fbbf24;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .target-marker.avg::after {
+      content: '';
+      display: block;
+      width: 2px;
+      height: 14px;
+      background: #fbbf24;
+      margin: 4px auto 0;
+    }
+    .target-marker.avg .dot {
+      display: block;
+      width: 12px; height: 12px;
+      border: 2px solid #fbbf24;
+      background: rgba(0,0,0,.3);
+      border-radius: 50%;
+      margin: 4px auto -8px;
+    }
+    .target-marker.cur {
+      bottom: -32px;
+      color: #3b82f6;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+      text-align: center;
+    }
+    .target-marker.cur::before {
+      content: '';
+      display: block;
+      width: 2px;
+      height: 14px;
+      background: #3b82f6;
+      margin: 0 auto 4px;
+    }
+    .target-marker.cur .dot {
+      display: block;
+      width: 12px; height: 12px;
+      border: 2px solid #3b82f6;
+      background: rgba(0,0,0,.3);
+      border-radius: 50%;
+      margin: -8px auto 4px;
+    }
+    .target-range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 14px;
+      font-size: 10.5px;
+      color: var(--muted);
+    }
+    .target-range-labels strong { color: var(--text) }
+
+    /* ═══ BALANCE SHEET ═══ */
+    .bsheet-wrap { display: block }
+    .bsheet-canvas { width: 100%; height: 180px; display: block; margin-bottom: 10px }
+    .bsheet-legend {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      font-size: 10.5px;
+      color: var(--muted);
+      margin: 6px 0 12px;
+      flex-wrap: wrap;
+    }
+    .bsheet-legend .dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      margin-right: 5px;
+      vertical-align: -1px;
+    }
+    .bsheet-legend .line-icon {
+      display: inline-block;
+      width: 14px; height: 2px;
+      background: #fbbf24;
+      margin-right: 5px;
+      vertical-align: 3px;
+      position: relative;
+    }
+    .bsheet-legend .line-icon::after {
+      content: '';
+      position: absolute;
+      left: 50%; top: 50%;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #fbbf24;
+      transform: translate(-50%, -50%);
+    }
+    .bsheet-table {
+      width: 100%;
+      font-size: 11px;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+    .bsheet-table th, .bsheet-table td {
+      padding: 6px 4px;
+      text-align: right;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    .bsheet-table th {
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 10.5px;
+    }
+    .bsheet-table tr td:first-child, .bsheet-table tr th:first-child {
+      text-align: left;
+      color: var(--text);
+      font-weight: 600;
+    }
+    .bsheet-table td.pos { color: #10b981 }
+    .bsheet-table td.neg { color: #ef4444 }
+    .bsheet-table .row-icon {
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      margin-right: 6px;
+      vertical-align: 0;
+    }
+    @media(max-width:480px) {
+      .bsheet-table { font-size: 10px }
+      .bsheet-table th, .bsheet-table td { padding: 5px 3px }
+      .bsheet-canvas { height: 160px }
+    }
+
     /* ═══ IFRAME SKELETON LOADER ═══ */
     .tv-wrap, .tradingview-widget-container {
       position: relative;
@@ -3690,6 +3954,52 @@
                 </div>
               </div>
             </div>
+
+            <!-- Valuation Analysis -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Valuation Analysis</div>
+                <div class="card-meta" data-val-meta="MU" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="val-tabs" data-val-symbol="MU" role="tablist">
+                  <button type="button" class="val-tab active" data-val-metric="forwardPE">Forward PE</button>
+                  <button type="button" class="val-tab" data-val-metric="trailingPE">P/E (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToSales">P/S (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToBook">P/B</button>
+                  <button type="button" class="val-tab" data-val-metric="evToEbitda">EV/EBITDA</button>
+                </div>
+                <div class="val-display" data-val-symbol="MU" data-val-color="#8b5cf6">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analyst Price Targets -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Analyst Price Targets</div>
+                <div class="card-meta" data-target-meta="MU" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="target-display" data-target-symbol="MU" data-target-color="#8b5cf6">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Balance Sheet &mdash; Assets / Liabilities / Debt Ratio</div>
+                <div class="card-meta" style="font-size:10.5px;color:var(--muted)">5-Year Annual</div>
+              </div>
+              <div class="card-body">
+                <div class="bsheet-wrap" data-bsheet-symbol="MU" data-bsheet-color="#8b5cf6">
+                  <div class="fin-loading" style="min-height:200px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -5254,6 +5564,52 @@
                 </div>
               </div>
             </div>
+
+            <!-- Valuation Analysis -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Valuation Analysis</div>
+                <div class="card-meta" data-val-meta="AMD" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="val-tabs" data-val-symbol="AMD" role="tablist">
+                  <button type="button" class="val-tab active" data-val-metric="forwardPE">Forward PE</button>
+                  <button type="button" class="val-tab" data-val-metric="trailingPE">P/E (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToSales">P/S (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToBook">P/B</button>
+                  <button type="button" class="val-tab" data-val-metric="evToEbitda">EV/EBITDA</button>
+                </div>
+                <div class="val-display" data-val-symbol="AMD" data-val-color="#ef4444">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analyst Price Targets -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Analyst Price Targets</div>
+                <div class="card-meta" data-target-meta="AMD" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="target-display" data-target-symbol="AMD" data-target-color="#ef4444">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Balance Sheet &mdash; Assets / Liabilities / Debt Ratio</div>
+                <div class="card-meta" style="font-size:10.5px;color:var(--muted)">5-Year Annual</div>
+              </div>
+              <div class="card-body">
+                <div class="bsheet-wrap" data-bsheet-symbol="AMD" data-bsheet-color="#ef4444">
+                  <div class="fin-loading" style="min-height:200px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -6783,6 +7139,52 @@
               <div class="card-body">
                 <div class="fin-charts-wrap" data-fin-symbol="NVDA" data-fin-color="#10b981">
                   <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Valuation Analysis -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Valuation Analysis</div>
+                <div class="card-meta" data-val-meta="NVDA" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="val-tabs" data-val-symbol="NVDA" role="tablist">
+                  <button type="button" class="val-tab active" data-val-metric="forwardPE">Forward PE</button>
+                  <button type="button" class="val-tab" data-val-metric="trailingPE">P/E (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToSales">P/S (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToBook">P/B</button>
+                  <button type="button" class="val-tab" data-val-metric="evToEbitda">EV/EBITDA</button>
+                </div>
+                <div class="val-display" data-val-symbol="NVDA" data-val-color="#10b981">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analyst Price Targets -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Analyst Price Targets</div>
+                <div class="card-meta" data-target-meta="NVDA" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="target-display" data-target-symbol="NVDA" data-target-color="#10b981">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Balance Sheet &mdash; Assets / Liabilities / Debt Ratio</div>
+                <div class="card-meta" style="font-size:10.5px;color:var(--muted)">5-Year Annual</div>
+              </div>
+              <div class="card-body">
+                <div class="bsheet-wrap" data-bsheet-symbol="NVDA" data-bsheet-color="#10b981">
+                  <div class="fin-loading" style="min-height:200px"><div class="fin-loading-spinner"></div></div>
                 </div>
               </div>
             </div>
@@ -8373,6 +8775,52 @@
               <div class="card-body">
                 <div class="fin-charts-wrap" data-fin-symbol="TSM" data-fin-color="#06b6d4">
                   <div class="fin-loading"><div class="fin-loading-spinner"></div><div>Fetching latest financials&hellip;</div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Valuation Analysis -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Valuation Analysis</div>
+                <div class="card-meta" data-val-meta="TSM" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="val-tabs" data-val-symbol="TSM" role="tablist">
+                  <button type="button" class="val-tab active" data-val-metric="forwardPE">Forward PE</button>
+                  <button type="button" class="val-tab" data-val-metric="trailingPE">P/E (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToSales">P/S (TTM)</button>
+                  <button type="button" class="val-tab" data-val-metric="priceToBook">P/B</button>
+                  <button type="button" class="val-tab" data-val-metric="evToEbitda">EV/EBITDA</button>
+                </div>
+                <div class="val-display" data-val-symbol="TSM" data-val-color="#06b6d4">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Analyst Price Targets -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Analyst Price Targets</div>
+                <div class="card-meta" data-target-meta="TSM" style="font-size:10.5px;color:var(--muted)">Loading&hellip;</div>
+              </div>
+              <div class="card-body">
+                <div class="target-display" data-target-symbol="TSM" data-target-color="#06b6d4">
+                  <div class="fin-loading" style="min-height:120px"><div class="fin-loading-spinner"></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Balance Sheet -->
+            <div class="card" style="margin-top:16px">
+              <div class="card-head">
+                <div class="card-title">Balance Sheet &mdash; Assets / Liabilities / Debt Ratio</div>
+                <div class="card-meta" style="font-size:10.5px;color:var(--muted)">5-Year Annual</div>
+              </div>
+              <div class="card-body">
+                <div class="bsheet-wrap" data-bsheet-symbol="TSM" data-bsheet-color="#06b6d4">
+                  <div class="fin-loading" style="min-height:200px"><div class="fin-loading-spinner"></div></div>
                 </div>
               </div>
             </div>
@@ -14101,6 +14549,433 @@
           var sym = wrap.dataset.finSymbol;
           var cached = loadCache(sym);
           if (cached) renderForSymbol(sym, cached);
+        });
+      }, 200);
+    });
+
+    // Expose data cache to other modules so they share the single fetch
+    window.__finDataCache = {
+      get: loadCache,
+      set: saveCache,
+      key: CACHE_KEY
+    };
+  })();
+  </script>
+
+  <script>
+  // ── Valuation Analysis + Analyst Targets + Balance Sheet ──
+  // Uses the same /api/financials payload (shared cache with fin-charts).
+  (function(){
+    var rendered = {};
+    var selectedMetric = {}; // per-symbol currently selected valuation tab
+
+    function fmtNum(v, dp) {
+      if (v == null || !isFinite(v)) return '–';
+      dp = dp == null ? 2 : dp;
+      return Number(v).toFixed(dp);
+    }
+    function fmtPrice(v) {
+      if (v == null || !isFinite(v)) return '–';
+      return '$' + Number(v).toFixed(2);
+    }
+    function fmtB(val) {
+      if (val == null || !isFinite(val)) return '–';
+      var b = val / 1e9;
+      var sign = b < 0 ? '-' : '';
+      var ab = Math.abs(b);
+      if (ab >= 100) return sign + ab.toFixed(0) + 'B';
+      if (ab >= 10)  return sign + ab.toFixed(1) + 'B';
+      return sign + ab.toFixed(2) + 'B';
+    }
+    function hexA(hex, a) {
+      var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+      return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+    }
+
+    // ── Valuation Analysis ──
+    var VAL_META = {
+      forwardPE:    { label: 'Forward PE',  suffix: 'x', sec: 'forwardEPS',  secLabel: 'Forward EPS',  secFmt: 'price', good: 12, bad: 30 },
+      trailingPE:   { label: 'P/E (TTM)',   suffix: 'x', sec: 'trailingEPS', secLabel: 'Trailing EPS', secFmt: 'price', good: 15, bad: 35 },
+      priceToSales: { label: 'P/S (TTM)',   suffix: 'x', sec: null,                                    secFmt: '',      good: 2,  bad: 12 },
+      priceToBook:  { label: 'P/B',         suffix: 'x', sec: null,                                    secFmt: '',      good: 1.5,bad: 8  },
+      evToEbitda:   { label: 'EV/EBITDA',   suffix: 'x', sec: null,                                    secFmt: '',      good: 8,  bad: 25 }
+    };
+
+    function renderValuation(sym, data) {
+      var wrap = document.querySelector('.val-display[data-val-symbol="' + sym + '"]');
+      if (!wrap) return;
+      var meta = document.querySelector('[data-val-meta="' + sym + '"]');
+      var metric = selectedMetric[sym] || 'forwardPE';
+      var def = VAL_META[metric];
+      var val = data[metric];
+
+      // Percentile-style position within "good → bad" range
+      var clampPct = function(v) { return Math.max(2, Math.min(98, v)); };
+      var pctPos;
+      if (val == null || !isFinite(val)) pctPos = null;
+      else if (val <= def.good) pctPos = 5;
+      else if (val >= def.bad) pctPos = 95;
+      else pctPos = ((val - def.good) / (def.bad - def.good)) * 100;
+
+      var html = '<div class="val-grid">';
+      html += '<div class="val-cell"><div class="val-label">' + def.label + '</div>'
+        + '<div class="val-num' + (val == null ? ' na' : '') + '">'
+        + (val == null ? 'N/A' : fmtNum(val) + def.suffix)
+        + '</div></div>';
+      if (def.sec) {
+        var secVal = data[def.sec];
+        html += '<div class="val-cell"><div class="val-label">' + def.secLabel + '</div>'
+          + '<div class="val-num' + (secVal == null ? ' na' : '') + '">'
+          + (secVal == null ? 'N/A' : (def.secFmt === 'price' ? fmtPrice(secVal) : fmtNum(secVal)))
+          + '</div></div>';
+      } else {
+        // Show current price as a context cell
+        html += '<div class="val-cell"><div class="val-label">Current Price</div>'
+          + '<div class="val-num">' + fmtPrice(data.currentPrice) + '</div></div>';
+      }
+      // Position vs typical-range
+      html += '<div class="val-cell"><div class="val-label">Cheap ←→ Expensive</div>'
+        + '<div class="val-num' + (pctPos == null ? ' na' : '') + '" style="font-size:18px">'
+        + (pctPos == null ? 'N/A' : (val <= def.good ? 'Cheap' : val >= def.bad ? 'Expensive' : 'Fair'))
+        + '</div></div>';
+      html += '</div>';
+
+      if (pctPos != null) {
+        html += '<div class="val-percentile">'
+          + '<div class="val-perc-label"><span>Position vs typical range</span><span>' + fmtNum(val) + def.suffix + '</span></div>'
+          + '<div class="val-perc-bar"><div class="val-perc-marker" style="left:' + clampPct(pctPos) + '%"></div></div>'
+          + '<div class="val-perc-scale"><span>' + def.good + def.suffix + ' (cheap)</span><span>' + def.bad + def.suffix + ' (expensive)</span></div>'
+          + '</div>';
+      }
+
+      wrap.innerHTML = html;
+      if (meta) {
+        var ts = data.ts ? new Date(data.ts) : new Date();
+        meta.textContent = 'Live · ' + ts.toLocaleTimeString();
+      }
+    }
+
+    // ── Analyst Price Targets ──
+    function renderTargets(sym, data) {
+      var wrap = document.querySelector('.target-display[data-target-symbol="' + sym + '"]');
+      if (!wrap) return;
+      var meta = document.querySelector('[data-target-meta="' + sym + '"]');
+
+      var avg = data.targetMeanPrice;
+      var high = data.targetHighPrice;
+      var low = data.targetLowPrice;
+      var cur = data.currentPrice;
+      var n = data.numberOfAnalystOpinions;
+
+      if (avg == null && high == null && low == null) {
+        wrap.innerHTML = '<div class="fin-error" style="padding:20px"><div>No analyst targets available</div></div>';
+        if (meta) meta.textContent = 'No data';
+        return;
+      }
+
+      // Synthesize missing bounds if needed
+      if (low == null && avg != null) low = avg * 0.8;
+      if (high == null && avg != null) high = avg * 1.2;
+      if (avg == null && low != null && high != null) avg = (low + high) / 2;
+
+      var range = (high - low) || 1;
+      var avgPct = Math.max(2, Math.min(98, ((avg - low) / range) * 100));
+      var curPct = cur != null ? Math.max(2, Math.min(98, ((cur - low) / range) * 100)) : null;
+      var upside = (cur != null && avg != null) ? ((avg - cur) / cur) * 100 : null;
+      var upsideCls = upside == null ? '' : (upside >= 0 ? 'up' : 'dn');
+      var upsideStr = upside == null ? '–' : (upside >= 0 ? '+' : '') + upside.toFixed(2) + '%';
+
+      var html = '<div class="target-summary">'
+        + '<div class="label">Based on <strong>' + (n || 'multiple') + '</strong> analysts</div>'
+        + '<div class="upside ' + upsideCls + '">Upside: ' + upsideStr + '</div>'
+        + '</div>';
+
+      html += '<div class="target-bar-wrap">'
+        + '<div class="target-bar">'
+        + '<div class="target-marker avg" style="left:' + avgPct + '%">Avg ' + fmtPrice(avg) + '<span class="dot"></span></div>'
+        + (curPct != null ? '<div class="target-marker cur" style="left:' + curPct + '%"><span class="dot"></span>Current ' + fmtPrice(cur) + '</div>' : '')
+        + '</div>'
+        + '<div class="target-range-labels">'
+        +   '<span>Lowest <strong>' + fmtPrice(low) + '</strong></span>'
+        +   '<span>Highest <strong>' + fmtPrice(high) + '</strong></span>'
+        + '</div>'
+        + '</div>';
+
+      wrap.innerHTML = html;
+      if (meta) {
+        var ts = data.ts ? new Date(data.ts) : new Date();
+        meta.textContent = 'Updated ' + ts.toLocaleDateString();
+      }
+    }
+
+    // ── Balance Sheet ──
+    function drawBalanceSheet(canvas, years, assets, liab, debtRatio, color) {
+      var ctx = canvas.getContext('2d');
+      var dpr = window.devicePixelRatio || 1;
+      var cssW = canvas.clientWidth || 600;
+      var cssH = canvas.clientHeight || 180;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cssW, cssH);
+
+      if (!years.length) return;
+      var padL = 30, padR = 40, padT = 18, padB = 26;
+      var chartW = cssW - padL - padR;
+      var chartH = cssH - padT - padB;
+
+      var allVals = assets.concat(liab.filter(function(v){return v!=null}));
+      var maxV = Math.max.apply(null, allVals.concat(0));
+      var n = years.length;
+      var groupW = chartW / n;
+      var barW = Math.min(22, (groupW - 6) / 2);
+
+      // Grid
+      ctx.strokeStyle = 'rgba(255,255,255,.06)';
+      ctx.lineWidth = 1;
+      for (var i = 0; i <= 4; i++) {
+        var gy = padT + (i / 4) * chartH;
+        ctx.beginPath();
+        ctx.moveTo(padL, gy); ctx.lineTo(padL + chartW, gy);
+        ctx.stroke();
+      }
+
+      // Bars
+      var blue = '#3b82f6';
+      var red = '#ef4444';
+      var lineCenters = [];
+
+      for (var k = 0; k < n; k++) {
+        var cx = padL + groupW * k + groupW / 2;
+        // Assets bar (left)
+        var ah = (assets[k] / maxV) * chartH;
+        var ay = padT + chartH - ah;
+        var ax = cx - barW - 1;
+        var gradA = ctx.createLinearGradient(0, ay, 0, ay + ah);
+        gradA.addColorStop(0, blue);
+        gradA.addColorStop(1, hexA(blue, .4));
+        ctx.fillStyle = gradA;
+        var rA = Math.min(3, barW/2, ah/2);
+        ctx.beginPath();
+        ctx.moveTo(ax, ay + rA);
+        ctx.quadraticCurveTo(ax, ay, ax + rA, ay);
+        ctx.lineTo(ax + barW - rA, ay);
+        ctx.quadraticCurveTo(ax + barW, ay, ax + barW, ay + rA);
+        ctx.lineTo(ax + barW, ay + ah);
+        ctx.lineTo(ax, ay + ah);
+        ctx.closePath();
+        ctx.fill();
+
+        // Liabilities bar (right)
+        if (liab[k] != null) {
+          var lh = (liab[k] / maxV) * chartH;
+          var ly = padT + chartH - lh;
+          var lx = cx + 1;
+          var gradL = ctx.createLinearGradient(0, ly, 0, ly + lh);
+          gradL.addColorStop(0, red);
+          gradL.addColorStop(1, hexA(red, .4));
+          ctx.fillStyle = gradL;
+          var rL = Math.min(3, barW/2, lh/2);
+          ctx.beginPath();
+          ctx.moveTo(lx, ly + rL);
+          ctx.quadraticCurveTo(lx, ly, lx + rL, ly);
+          ctx.lineTo(lx + barW - rL, ly);
+          ctx.quadraticCurveTo(lx + barW, ly, lx + barW, ly + rL);
+          ctx.lineTo(lx + barW, ly + lh);
+          ctx.lineTo(lx, ly + lh);
+          ctx.closePath();
+          ctx.fill();
+
+          // Value labels on top
+          ctx.fillStyle = '#3b82f6';
+          ctx.font = '600 9.5px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(fmtB(assets[k]), ax + barW/2, ay - 3);
+          ctx.fillStyle = '#ef4444';
+          ctx.fillText(fmtB(liab[k]), lx + barW/2, ly - 3);
+        } else {
+          ctx.fillStyle = '#3b82f6';
+          ctx.font = '600 9.5px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(fmtB(assets[k]), ax + barW/2, ay - 3);
+        }
+
+        // Year label
+        ctx.fillStyle = 'rgba(255,255,255,.5)';
+        ctx.font = '10px Inter, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('FY' + years[k], cx, cssH - 6);
+
+        lineCenters.push(cx);
+      }
+
+      // Debt ratio line (right Y axis: 0-100%)
+      var maxRatio = 100;
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      var started = false;
+      var ratioYs = [];
+      for (var m = 0; m < n; m++) {
+        if (debtRatio[m] == null) { ratioYs.push(null); continue; }
+        var ry = padT + chartH - (debtRatio[m] / maxRatio) * chartH;
+        ratioYs.push(ry);
+        if (!started) { ctx.moveTo(lineCenters[m], ry); started = true; }
+        else ctx.lineTo(lineCenters[m], ry);
+      }
+      ctx.stroke();
+
+      // Line dots + labels
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '600 9.5px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      for (var p = 0; p < ratioYs.length; p++) {
+        if (ratioYs[p] == null) continue;
+        ctx.beginPath();
+        ctx.arc(lineCenters[p], ratioYs[p], 2.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // Y-axis bar values (left)
+      ctx.fillStyle = 'rgba(255,255,255,.4)';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.textAlign = 'right';
+      for (var q = 0; q <= 4; q++) {
+        var v = maxV * (1 - q / 4);
+        var gy2 = padT + (q / 4) * chartH;
+        ctx.fillText(fmtB(v), padL - 4, gy2 + 3);
+      }
+      // Right Y axis (debt ratio scale)
+      ctx.fillStyle = 'rgba(251,191,36,.6)';
+      ctx.textAlign = 'left';
+      for (var r2 = 0; r2 <= 4; r2++) {
+        var rv = 100 * (1 - r2 / 4);
+        var gy3 = padT + (r2 / 4) * chartH;
+        ctx.fillText(rv.toFixed(0) + '%', padL + chartW + 4, gy3 + 3);
+      }
+    }
+
+    function renderBalanceSheet(sym, data) {
+      var wrap = document.querySelector('.bsheet-wrap[data-bsheet-symbol="' + sym + '"]');
+      if (!wrap) return;
+      var color = wrap.dataset.bsheetColor || '#06b6d4';
+
+      var assets = (data.assets || []).slice(-5);
+      var liabSrc = (data.liabilities || []);
+      // Align liabilities to asset years
+      var liabMap = {}; liabSrc.forEach(function(l){ liabMap[l.fy] = l.val; });
+
+      if (!assets.length) {
+        wrap.innerHTML = '<div class="fin-error" style="padding:20px"><div>Balance sheet data not available</div></div>';
+        return;
+      }
+
+      var years = assets.map(function(a){ return a.fy });
+      var assetVals = assets.map(function(a){ return a.val });
+      var liabVals = years.map(function(y){ return liabMap[y] != null ? liabMap[y] : null });
+      var debtRatio = years.map(function(y, i) {
+        if (liabMap[y] == null) return null;
+        return (liabMap[y] / assetVals[i]) * 100;
+      });
+
+      var canvasId = 'bsheet-canvas-' + sym;
+      var html = '<canvas class="bsheet-canvas" id="' + canvasId + '"></canvas>'
+        + '<div class="bsheet-legend">'
+        +   '<span><span class="dot" style="background:#3b82f6"></span>Total Assets</span>'
+        +   '<span><span class="dot" style="background:#ef4444"></span>Total Liabilities</span>'
+        +   '<span><span class="line-icon"></span>Debt Ratio</span>'
+        + '</div>'
+        + '<table class="bsheet-table"><thead><tr><th></th>'
+        + years.map(function(y){ return '<th>FY' + y + '</th>' }).join('')
+        + '</tr></thead><tbody>'
+        + '<tr><td><span class="row-icon" style="background:#3b82f6"></span>Assets</td>'
+        + assetVals.map(function(v){ return '<td>' + fmtB(v) + '</td>' }).join('') + '</tr>'
+        + '<tr><td><span class="row-icon" style="background:#ef4444"></span>Liabilities</td>'
+        + liabVals.map(function(v){ return '<td>' + (v != null ? fmtB(v) : '–') + '</td>' }).join('') + '</tr>'
+        + '<tr><td><span class="row-icon" style="background:#fbbf24"></span>Debt Ratio</td>'
+        + debtRatio.map(function(r){
+            if (r == null) return '<td>–</td>';
+            var cls = r < 50 ? 'pos' : 'neg';
+            return '<td class="' + cls + '">' + r.toFixed(1) + '%</td>';
+          }).join('') + '</tr>'
+        + '</tbody></table>';
+
+      wrap.innerHTML = html;
+      drawBalanceSheet(document.getElementById(canvasId), years, assetVals, liabVals, debtRatio, color);
+    }
+
+    function renderAll(sym, data) {
+      if (!selectedMetric[sym]) selectedMetric[sym] = 'forwardPE';
+      try { renderValuation(sym, data); } catch(e) { console.warn('val render fail', sym, e); }
+      try { renderTargets(sym, data); } catch(e) { console.warn('targets render fail', sym, e); }
+      try { renderBalanceSheet(sym, data); } catch(e) { console.warn('bsheet render fail', sym, e); }
+    }
+
+    function fetchAndRenderExtras(sym) {
+      if (rendered[sym]) return;
+      rendered[sym] = true;
+
+      var cached = window.__finDataCache && window.__finDataCache.get(sym);
+      if (cached) { renderAll(sym, cached); return; }
+
+      // Fallback: fetch ourselves (shouldn't happen if main charts loaded first)
+      fetch('/api/financials?symbol=' + sym)
+        .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(data) {
+          if (window.__finDataCache) window.__finDataCache.set(sym, data);
+          renderAll(sym, data);
+        })
+        .catch(function(err){
+          console.warn('[fin-extras] fetch fail', sym, err);
+          rendered[sym] = false;
+          var symValDisplay = document.querySelector('.val-display[data-val-symbol="' + sym + '"]');
+          if (symValDisplay) symValDisplay.innerHTML = '<div class="fin-error" style="padding:30px"><div>Could not load data</div></div>';
+          var symTargetDisplay = document.querySelector('.target-display[data-target-symbol="' + sym + '"]');
+          if (symTargetDisplay) symTargetDisplay.innerHTML = '<div class="fin-error" style="padding:30px"><div>Could not load data</div></div>';
+          var symBS = document.querySelector('.bsheet-wrap[data-bsheet-symbol="' + sym + '"]');
+          if (symBS) symBS.innerHTML = '<div class="fin-error" style="padding:30px"><div>Could not load data</div></div>';
+        });
+    }
+
+    function scanActiveExtras() {
+      document.querySelectorAll('.val-display[data-val-symbol]').forEach(function(el) {
+        var page = el.closest('.sub-page');
+        if (!page || !page.classList.contains('active')) return;
+        var stockSec = el.closest('.stock-section');
+        if (stockSec && !stockSec.classList.contains('active')) return;
+        fetchAndRenderExtras(el.dataset.valSymbol);
+      });
+    }
+
+    // Tab clicks
+    document.addEventListener('click', function(e) {
+      var tab = e.target && e.target.closest && e.target.closest('.val-tab');
+      if (tab) {
+        var tabs = tab.parentElement;
+        var sym = tabs.dataset.valSymbol;
+        tabs.querySelectorAll('.val-tab').forEach(function(b){ b.classList.remove('active') });
+        tab.classList.add('active');
+        selectedMetric[sym] = tab.dataset.valMetric;
+        var cached = window.__finDataCache && window.__finDataCache.get(sym);
+        if (cached) renderValuation(sym, cached);
+        return;
+      }
+      var navClick = e.target && e.target.closest && e.target.closest('.snav-btn, .sub-tab, [data-stock][role="tab"]');
+      if (navClick) setTimeout(scanActiveExtras, 250);
+    }, true);
+
+    if (document.readyState === 'complete') setTimeout(scanActiveExtras, 800);
+    else window.addEventListener('load', function(){ setTimeout(scanActiveExtras, 800); });
+
+    var resizeTimer = null;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function(){
+        ['MU','AMD','NVDA','TSM'].forEach(function(sym) {
+          var cached = window.__finDataCache && window.__finDataCache.get(sym);
+          if (!cached) return;
+          var bs = document.querySelector('.bsheet-wrap[data-bsheet-symbol="' + sym + '"] canvas');
+          if (bs) renderBalanceSheet(sym, cached);
         });
       }, 200);
     });

@@ -93,6 +93,14 @@ async function fetchEDGAR(cik) {
     sharesOut: latestPoint(facts, ['CommonStockSharesOutstanding']),
     netIncome: extractAnnualUSD(facts, ['NetIncomeLoss']),
     grossProfit: extractAnnualUSD(facts, ['GrossProfit']),
+    // Balance sheet: annual totals for last 5 years
+    assets: extractAnnualUSD(facts, ['Assets']),
+    liabilities: extractAnnualUSD(facts, ['Liabilities']),
+    stockholdersEquity: extractAnnualUSD(facts, ['StockholdersEquity', 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest']),
+    // Cash flow statement breakdown
+    cfo: extractAnnualUSD(facts, ['NetCashProvidedByUsedInOperatingActivities']),
+    cfi: extractAnnualUSD(facts, ['NetCashProvidedByUsedInInvestingActivities']),
+    cff: extractAnnualUSD(facts, ['NetCashProvidedByUsedInFinancingActivities']),
   };
 }
 
@@ -183,6 +191,12 @@ function merge(symbol, edgar, yahoo) {
     wcChange: [],
     netIncome: [],
     grossProfit: [],
+    assets: [],
+    liabilities: [],
+    stockholdersEquity: [],
+    cfo: [],
+    cfi: [],
+    cff: [],
     cash: null,
     debt: null,
     sharesOut: null,
@@ -191,10 +205,16 @@ function merge(symbol, edgar, yahoo) {
     trailingPE: null,
     evToEbitda: null,
     priceToSales: null,
+    priceToBook: null,
     forwardEPS: null,
     trailingEPS: null,
     targetMeanPrice: null,
+    targetHighPrice: null,
+    targetLowPrice: null,
+    numberOfAnalystOpinions: null,
     currentPrice: null,
+    fiftyTwoWeekHigh: null,
+    fiftyTwoWeekLow: null,
     earningsTrend: [],
     ts: Date.now(),
   };
@@ -208,6 +228,12 @@ function merge(symbol, edgar, yahoo) {
     out.wcChange = edgar.wcChange;
     out.netIncome = edgar.netIncome;
     out.grossProfit = edgar.grossProfit;
+    out.assets = edgar.assets || [];
+    out.liabilities = edgar.liabilities || [];
+    out.stockholdersEquity = edgar.stockholdersEquity || [];
+    out.cfo = edgar.cfo || [];
+    out.cfi = edgar.cfi || [];
+    out.cff = edgar.cff || [];
     out.cash = edgar.cash;
     out.debt = edgar.debt;
     out.sharesOut = edgar.sharesOut;
@@ -222,6 +248,11 @@ function merge(symbol, edgar, yahoo) {
     if (!out.capex.length) out.capex = yahooCashflowArr(yahoo, 'capitalExpenditures');
     if (!out.da.length) out.da = yahooCashflowArr(yahoo, 'depreciation');
     if (!out.wcChange.length) out.wcChange = yahooCashflowArr(yahoo, 'changeToOperatingActivities');
+    if (!out.assets.length) out.assets = yahooBalanceArr(yahoo, 'totalAssets');
+    if (!out.liabilities.length) out.liabilities = yahooBalanceArr(yahoo, 'totalLiab');
+    if (!out.cfo.length) out.cfo = yahooCashflowArr(yahoo, 'totalCashFromOperatingActivities');
+    if (!out.cfi.length) out.cfi = yahooCashflowArr(yahoo, 'totalCashflowsFromInvestingActivities');
+    if (!out.cff.length) out.cff = yahooCashflowArr(yahoo, 'totalCashFromFinancingActivities');
     if (out.cash == null) out.cash = ynum(safeGet(yahoo, 'financialData.totalCash'));
     if (out.debt == null) out.debt = ynum(safeGet(yahoo, 'financialData.totalDebt'));
     if (out.sharesOut == null) out.sharesOut = ynum(safeGet(yahoo, 'defaultKeyStatistics.sharesOutstanding'));
@@ -231,9 +262,15 @@ function merge(symbol, edgar, yahoo) {
     out.trailingPE = ynum(safeGet(yahoo, 'summaryDetail.trailingPE'));
     out.evToEbitda = ynum(safeGet(yahoo, 'defaultKeyStatistics.enterpriseToEbitda'));
     out.priceToSales = ynum(safeGet(yahoo, 'summaryDetail.priceToSalesTrailing12Months'));
+    out.priceToBook = ynum(safeGet(yahoo, 'defaultKeyStatistics.priceToBook'));
     out.forwardEPS = ynum(safeGet(yahoo, 'defaultKeyStatistics.forwardEps'));
     out.trailingEPS = ynum(safeGet(yahoo, 'defaultKeyStatistics.trailingEps'));
     out.targetMeanPrice = ynum(safeGet(yahoo, 'financialData.targetMeanPrice'));
+    out.targetHighPrice = ynum(safeGet(yahoo, 'financialData.targetHighPrice'));
+    out.targetLowPrice = ynum(safeGet(yahoo, 'financialData.targetLowPrice'));
+    out.numberOfAnalystOpinions = ynum(safeGet(yahoo, 'financialData.numberOfAnalystOpinions'));
+    out.fiftyTwoWeekHigh = ynum(safeGet(yahoo, 'summaryDetail.fiftyTwoWeekHigh'));
+    out.fiftyTwoWeekLow = ynum(safeGet(yahoo, 'summaryDetail.fiftyTwoWeekLow'));
     out.currentPrice =
       ynum(safeGet(yahoo, 'financialData.currentPrice')) || ynum(safeGet(yahoo, 'price.regularMarketPrice'));
 
@@ -265,6 +302,19 @@ function yahooIncomeArr(yahoo, key) {
 
 function yahooCashflowArr(yahoo, key) {
   const rows = safeGet(yahoo, 'cashflowStatementHistory.cashflowStatements', []);
+  return rows
+    .slice()
+    .reverse()
+    .map((r) => ({
+      fy: parseInt((r.endDate && r.endDate.fmt) || '0', 10),
+      val: ynum(r[key]),
+      end: (r.endDate && r.endDate.fmt) || null,
+    }))
+    .filter((x) => x.val != null);
+}
+
+function yahooBalanceArr(yahoo, key) {
+  const rows = safeGet(yahoo, 'balanceSheetHistory.balanceSheetStatements', []);
   return rows
     .slice()
     .reverse()
