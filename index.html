@@ -12429,6 +12429,7 @@
 
     // Detect file:// — Netlify functions can't be reached, jump straight to CORS proxies.
     var IS_FILE = (typeof location !== 'undefined' && location.protocol === 'file:');
+    var IS_PAGES = (typeof location !== 'undefined' && location.hostname.endsWith('.github.io'));
 
     // ── Netlify bypass logic ─────────────────────────────────────────────────
     // Three triggers to skip /api/* and go straight to public CORS proxies:
@@ -12440,7 +12441,7 @@
     var BYPASS_KEY = 'nf_bypass';
     var BYPASS_TTL_MS = 60 * 60 * 1000; // 1 hour
     function isNetlifyBypassed() {
-      if (IS_FILE || FORCE_DIRECT) return true;
+      if (IS_FILE || IS_PAGES || FORCE_DIRECT) return true;
       try {
         var raw = sessionStorage.getItem(BYPASS_KEY);
         if (!raw) return false;
