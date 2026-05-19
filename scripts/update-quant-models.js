@@ -18,14 +18,14 @@ const VOL_MAP = { MU: 0.58, AMD: 0.52, NVDA: 0.55, TSM: 0.42 };
 
 // ── HTTP helpers ──
 
-function fetchText(url) {
+function fetchText(url, opts = {}) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; QuantUpdate/1.0)',
-        'Accept': 'text/csv,text/plain,*/*',
-      },
-    }, (res) => {
+    const headers = Object.assign({
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+      'Accept': 'text/csv,application/json,text/plain,*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+    }, opts.headers || {});
+    const req = https.get(url, { headers }, (res) => {
       const chunks = [];
       res.on('data', c => chunks.push(c));
       res.on('end', () => {
@@ -38,14 +38,43 @@ function fetchText(url) {
   });
 }
 
-// ── Fetch from Stooq ──
+// ── Fetch history with multi-source fallback ──
 
-async function fetchHistory(symbol) {
-  // Daily OHLCV history (1+ year)
-  const url = `https://stooq.com/q/d/l/?s=${symbol.toLowerCase()}.us&i=d`;
+async function fetchHistoryYahoo(symbol) {
+  // Yahoo v8 chart API – works server-side; returns ~1Y of daily OHLCV
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?range=1y&interval=1d`;
+  const txt = await fetchText(url);
+  const json = JSON.parse(txt);
+  const result = json && json.chart && json.chart.result && json.chart.result[0];
+  if (!result) throw new Error('Yahoo: empty response');
+  const ts = result.timestamp || [];
+  const ind = result.indicators && result.indicators.quote && result.indicators.quote[0];
+  if (!ind) throw new Error('Yahoo: missing quote data');
+  const out = [];
+  for (let i = 0; i < ts.length; i++) {
+    const o = ind.open[i], h = ind.high[i], l = ind.low[i], c = ind.close[i], v = ind.volume[i];
+    if (c == null || isNaN(c) || c <= 0) continue;
+    out.push({
+      date: new Date(ts[i] * 1000).toISOString().slice(0, 10),
+      open: +o, high: +h, low: +l, close: +c,
+      volume: parseInt(v, 10) || 0,
+    });
+  }
+  return out;
+}
+
+async function fetchHistoryStooq(symbol) {
+  // Explicit 2-year date range for Stooq (handles GH Actions geo restrictions)
+  const today = new Date();
+  const past = new Date(today.getTime() - 730 * 86400e3);
+  const fmt = d => d.toISOString().slice(0, 10).replace(/-/g, '');
+  const url = `https://stooq.com/q/d/l/?s=${symbol.toLowerCase()}.us&d1=${fmt(past)}&d2=${fmt(today)}&i=d`;
   const csv = await fetchText(url);
-  const lines = csv.trim().split('\n').slice(1); // skip header
-  const history = lines.map(line => {
+  if (!csv || csv.length < 50 || csv.toLowerCase().includes('no data')) {
+    throw new Error('Stooq: empty CSV');
+  }
+  const lines = csv.trim().split(/\r?\n/).slice(1);
+  return lines.map(line => {
     const [date, open, high, low, close, volume] = line.split(',');
     return {
       date,
@@ -56,8 +85,26 @@ async function fetchHistory(symbol) {
       volume: parseInt(volume, 10) || 0,
     };
   }).filter(d => !isNaN(d.close) && d.close > 0);
-  if (history.length < 252) throw new Error(`Not enough history for ${symbol}`);
-  return history;
+}
+
+async function fetchHistory(symbol) {
+  let history = [];
+  let lastErr = null;
+  // Try Yahoo first (more reliable on GitHub Actions)
+  try {
+    history = await fetchHistoryYahoo(symbol);
+    if (history.length >= 60) return history;
+    lastErr = new Error(`Yahoo returned only ${history.length} rows`);
+  } catch (e) { lastErr = e; }
+
+  // Fallback to Stooq
+  try {
+    history = await fetchHistoryStooq(symbol);
+    if (history.length >= 60) return history;
+    lastErr = new Error(`Stooq returned only ${history.length} rows`);
+  } catch (e) { lastErr = e; }
+
+  throw new Error(`history fetch failed: ${lastErr ? lastErr.message : 'unknown'}`);
 }
 
 // ── Technical calculations ──
@@ -79,19 +126,21 @@ function ema(values, period) {
 }
 
 function calcIchimoku(history) {
-  const t9 = history.slice(-9);
+  const n = history.length;
+  const t9 = history.slice(-Math.min(9, n));
   const tenkan = (Math.max(...t9.map(d => d.high)) + Math.min(...t9.map(d => d.low))) / 2;
-  const k26 = history.slice(-26);
+  const k26 = history.slice(-Math.min(26, n));
   const kijun = (Math.max(...k26.map(d => d.high)) + Math.min(...k26.map(d => d.low))) / 2;
   const spanA = (tenkan + kijun) / 2;
-  const b52 = history.slice(-52);
+  const b52 = history.slice(-Math.min(52, n));
   const spanB = (Math.max(...b52.map(d => d.high)) + Math.min(...b52.map(d => d.low))) / 2;
-  const chikou = history[history.length - 1].close;
+  const chikou = history[n - 1].close;
   return { tenkan, kijun, spanA, spanB, chikou };
 }
 
 function calcFibonacci(history) {
-  const yr = history.slice(-252);
+  // Use up to last 252 days (1Y) — falls back gracefully if less is available
+  const yr = history.slice(-Math.min(252, history.length));
   const high = Math.max(...yr.map(d => d.high));
   const low = Math.min(...yr.map(d => d.low));
   const range = high - low;
