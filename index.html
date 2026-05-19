@@ -14205,7 +14205,7 @@
   //  2. Gross Profit (bars) + Operating Income (line)
   //  3. Free Cash Flow (bars with trend line)
   (function(){
-    var CACHE_KEY = 'fin-charts-v2';
+    var CACHE_KEY = 'fin-charts-v3';
     var CACHE_TTL_MS = 6 * 60 * 60 * 1000;
     var rendered = {};
 
@@ -14222,6 +14222,8 @@
     ];
 
     function computeFCF(data) {
+      // Prefer CFO - CapEx (most accurate) when CFO is available;
+      // otherwise fall back to NI + D&A - CapEx - WCChange approximation.
       var byYear = {};
       var add = function(arr, sign) {
         (arr || []).forEach(function(p) {
@@ -14229,10 +14231,17 @@
           byYear[p.fy] += sign * (p.val || 0);
         });
       };
-      add(data.netIncome, 1);
-      add(data.da, 1);
-      add(data.capex, -1);
-      add(data.wcChange, -1);
+      var hasCFO = Array.isArray(data.cfo) && data.cfo.length > 0;
+      if (hasCFO) {
+        add(data.cfo, 1);
+        // CapEx is positive outflow in our schema — subtract.
+        add(data.capex, -1);
+      } else {
+        add(data.netIncome, 1);
+        add(data.da, 1);
+        add(data.capex, -1);
+        add(data.wcChange, -1);
+      }
       return Object.keys(byYear)
         .map(function(fy) { return { fy: +fy, val: byYear[fy] }; })
         .sort(function(a, b) { return a.fy - b.fy; });
