@@ -145,11 +145,27 @@ const FALLBACK = {
   },
 };
 
+// Historical statements (annual time series). For these we *always* prefer
+// the verified 10-K values in FALLBACK over what EDGAR XBRL or Yahoo returns,
+// because both upstream sources occasionally mis-tag fiscal years
+// (e.g. returning a single point at FY2023 labelled as FY2025).
+const HISTORY_FIELDS = new Set([
+  'revenue', 'netIncome', 'grossProfit', 'ebit',
+  'capex', 'da', 'wcChange',
+  'assets', 'liabilities', 'stockholdersEquity',
+  'cfo', 'cfi', 'cff',
+]);
+
 // Apply fallback values to any null/empty field in the merged response.
+// For HISTORY_FIELDS we always override with fallback when available.
 function applyFallback(out, symbol) {
   const fb = FALLBACK[symbol];
   if (!fb) return out;
   for (const k of Object.keys(fb)) {
+    if (HISTORY_FIELDS.has(k) && Array.isArray(fb[k]) && fb[k].length > 0) {
+      out[k] = fb[k];
+      continue;
+    }
     const cur = out[k];
     const isEmptyArr = Array.isArray(cur) && cur.length === 0;
     const isMissing = cur == null || isEmptyArr;

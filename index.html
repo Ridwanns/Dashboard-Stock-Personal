@@ -1347,57 +1347,104 @@
     .fin-charts-wrap {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
+      gap: 14px;
     }
     .fin-chart-card {
-      background: rgba(255,255,255,.02);
+      position: relative;
+      background:
+        radial-gradient(120% 90% at 0% 0%, rgba(255,255,255,.04), transparent 55%),
+        rgba(255,255,255,.02);
       border: 1px solid var(--glass-border);
-      border-radius: 10px;
-      padding: 10px 12px 8px;
+      border-radius: 14px;
+      padding: 14px 14px 10px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .fin-chart-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--card-accent, #06b6d4), transparent);
+      opacity: .55;
+    }
+    .fin-chart-card:hover {
+      border-color: rgba(255,255,255,.10);
+      transform: translateY(-1px);
     }
     .fin-chart-head {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
+      align-items: flex-start;
       gap: 8px;
+      flex-wrap: wrap;
     }
     .fin-chart-title {
       font-size: 10.5px;
       font-weight: 700;
-      letter-spacing: .4px;
-      color: var(--text);
+      letter-spacing: .5px;
+      color: rgba(255,255,255,.72);
       text-transform: uppercase;
-    }
-    .fin-chart-latest {
-      font-size: 10.5px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .fin-chart-latest .val {
-      color: var(--text);
-      font-weight: 700;
-      margin-right: 3px;
-    }
-    .fin-chart-latest .yoy {
-      display: inline-block;
-      font-size: 9.5px;
-      padding: 1px 5px;
-      border-radius: 4px;
-      margin-left: 5px;
-    }
-    .fin-chart-latest .yoy.up { color: #10b981; background: rgba(16,185,129,.12) }
-    .fin-chart-latest .yoy.dn { color: #ef4444; background: rgba(239,68,68,.12) }
-    .fin-chart-sub {
-      font-size: 10px;
-      color: var(--muted);
-      margin: 4px 0 2px;
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
-    .fin-chart-sub .val { color: var(--text); font-weight: 600 }
+    .fin-chart-title::before {
+      content: '';
+      display: inline-block;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      background: var(--card-accent, #06b6d4);
+      box-shadow: 0 0 8px var(--card-accent, #06b6d4);
+    }
+    .fin-chart-latest {
+      font-size: 11px;
+      color: var(--muted);
+      white-space: nowrap;
+      text-align: right;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .fin-chart-latest .val {
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: .3px;
+      font-variant-numeric: tabular-nums;
+    }
+    .fin-chart-latest .fy {
+      font-size: 9.5px;
+      color: rgba(255,255,255,.45);
+      font-weight: 600;
+      letter-spacing: .3px;
+    }
+    .fin-chart-latest .yoy {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .fin-chart-latest .yoy.up { color: #10b981; background: rgba(16,185,129,.14) }
+    .fin-chart-latest .yoy.dn { color: #ef4444; background: rgba(239,68,68,.14) }
+    .fin-chart-sub {
+      font-size: 10.5px;
+      color: var(--muted);
+      margin: 6px 0 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      background: rgba(251,191,36,.05);
+      border-radius: 6px;
+      width: fit-content;
+    }
+    .fin-chart-sub .val { color: rgba(255,255,255,.92); font-weight: 700; font-variant-numeric: tabular-nums }
     .fin-line-dot {
       display: inline-block;
       width: 16px; height: 2px;
@@ -1416,9 +1463,9 @@
     }
     .fin-chart-canvas {
       width: 100%;
-      height: 120px;
+      height: 140px;
       display: block;
-      margin-top: 6px;
+      margin-top: 8px;
     }
     .fin-meta {
       display: flex;
@@ -14205,7 +14252,7 @@
   //  2. Gross Profit (bars) + Operating Income (line)
   //  3. Free Cash Flow (bars with trend line)
   (function(){
-    var CACHE_KEY = 'fin-charts-v3';
+    var CACHE_KEY = 'fin-charts-v4';
     var CACHE_TTL_MS = 6 * 60 * 60 * 1000;
     var rendered = {};
 
@@ -14282,7 +14329,7 @@
       var ctx = canvas.getContext('2d');
       var dpr = window.devicePixelRatio || 1;
       var cssW = canvas.clientWidth || 280;
-      var cssH = canvas.clientHeight || 120;
+      var cssH = canvas.clientHeight || 140;
       canvas.width = cssW * dpr;
       canvas.height = cssH * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -14297,46 +14344,74 @@
         return;
       }
 
-      var padL = 4, padR = 4, padT = 16, padB = 16;
+      var padL = 10, padR = 10, padT = 24, padB = 22;
       var chartW = cssW - padL - padR;
       var chartH = cssH - padT - padB;
 
-      // Combined value range (bars + line)
       var allVals = bars.slice();
       if (hasLine) line.forEach(function(v){ if (v != null) allVals.push(v); });
-      var max = Math.max.apply(null, allVals.concat(0));
-      var min = Math.min.apply(null, allVals.concat(0));
-      var range = max - min;
-      if (range === 0) range = Math.abs(max) || 1;
+      var maxRaw = Math.max.apply(null, allVals.concat(0));
+      var minRaw = Math.min.apply(null, allVals.concat(0));
+      // Pad top/bottom so labels have room to breathe
+      var span = maxRaw - minRaw;
+      var headroom = (span * 0.10) || Math.abs(maxRaw) * 0.1 || 1;
+      var max = maxRaw + headroom;
+      var min = minRaw < 0 ? minRaw - headroom * 0.4 : 0;
+      var range = max - min || 1;
 
       var n = bars.length;
-      var gap = 6;
-      var barW = Math.max(8, (chartW - gap * (n - 1)) / n);
+      var gap = Math.max(6, chartW * 0.025);
+      var barW = Math.max(10, (chartW - gap * (n - 1)) / n);
+      var zeroY = padT + ((max - 0) / range) * chartH;
 
-      var zeroY = padT + (max / range) * chartH;
-
-      // Baseline
-      ctx.strokeStyle = 'rgba(255,255,255,.07)';
+      // ── Soft horizontal grid (3 lines) ──
+      ctx.strokeStyle = 'rgba(255,255,255,.04)';
       ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(padL, zeroY);
-      ctx.lineTo(cssW - padR, zeroY);
-      ctx.stroke();
+      for (var g = 0; g <= 3; g++) {
+        var gy = padT + (g / 3) * chartH;
+        ctx.beginPath();
+        ctx.moveTo(padL, gy);
+        ctx.lineTo(cssW - padR, gy);
+        ctx.stroke();
+      }
 
-      // Bars
+      // ── Zero line (dashed) when values cross zero ──
+      if (minRaw < 0 && maxRaw > 0) {
+        ctx.strokeStyle = 'rgba(255,255,255,.20)';
+        ctx.setLineDash([3, 3]);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(padL, zeroY);
+        ctx.lineTo(cssW - padR, zeroY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // ── Bars with graduated opacity (older = darker, latest = bright + glow) ──
       var barCenters = [];
       bars.forEach(function(v, i) {
         var x = padL + i * (barW + gap);
         var h = Math.abs((v || 0) / range) * chartH;
         var y = (v || 0) >= 0 ? zeroY - h : zeroY;
         var isLast = i === n - 1;
+        var ageRatio = i / Math.max(1, n - 1); // 0 oldest → 1 newest
+        var topAlpha = 0.30 + ageRatio * 0.70;
+        var botAlpha = 0.12 + ageRatio * 0.38;
 
+        if (isLast) {
+          ctx.shadowColor = hexA(color, .55);
+          ctx.shadowBlur = 14;
+        }
         var grad = ctx.createLinearGradient(0, y, 0, y + h);
-        grad.addColorStop(0, isLast ? color : hexA(color, .5));
-        grad.addColorStop(1, isLast ? hexA(color, .65) : hexA(color, .2));
+        if ((v || 0) < 0) {
+          grad.addColorStop(0, hexA('#ef4444', topAlpha));
+          grad.addColorStop(1, hexA('#ef4444', botAlpha));
+        } else {
+          grad.addColorStop(0, hexA(color, topAlpha));
+          grad.addColorStop(1, hexA(color, botAlpha));
+        }
         ctx.fillStyle = grad;
-
-        var r = Math.min(3, barW/2, h/2);
+        var r = Math.min(4, barW/2, h/2);
         ctx.beginPath();
         ctx.moveTo(x, y + r);
         ctx.quadraticCurveTo(x, y, x + r, y);
@@ -14346,55 +14421,134 @@
         ctx.lineTo(x, y + h);
         ctx.closePath();
         ctx.fill();
+        ctx.shadowBlur = 0;
 
+        if (isLast) {
+          ctx.strokeStyle = hexA('#ffffff', .22);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
         barCenters.push(x + barW/2);
-
-        // Year label
-        ctx.fillStyle = isLast ? 'rgba(255,255,255,.85)' : 'rgba(255,255,255,.4)';
-        ctx.font = (isLast ? '600 ' : '') + '9.5px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillText("'" + String(years[i]).slice(-2), x + barW/2, cssH - 3);
       });
 
-      // Latest bar value label (only on top of last bar)
-      var lastIdx = n - 1, lastV = bars[lastIdx];
-      var lastH = Math.abs((lastV || 0) / range) * chartH;
-      var lastY = (lastV || 0) >= 0 ? zeroY - lastH : zeroY;
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '600 10px Inter, sans-serif';
+      // ── Year labels (FY notation) ──
       ctx.textAlign = 'center';
-      var labelY = (lastV || 0) >= 0 ? lastY - 4 : lastY + lastH + 11;
-      ctx.fillText(fmtB(lastV), barCenters[lastIdx], labelY);
+      bars.forEach(function(v, i) {
+        var isLast = i === n - 1;
+        ctx.fillStyle = isLast ? hexA(color, .95) : 'rgba(255,255,255,.42)';
+        ctx.font = (isLast ? '700 10px ' : '500 9.5px ') + 'Inter, sans-serif';
+        ctx.fillText('FY' + String(years[i]).slice(-2), barCenters[i], cssH - 6);
+      });
 
-      // Trend line on top
+      // ── Trend line (smooth Catmull-Rom bezier + gradient fill) ──
       if (hasLine && line.length) {
-        // Use line series (secondary metric) if provided; otherwise trend = bar values themselves
         var lineY = years.map(function(_, i) {
-          var v = hasLine && aligned.line ? line[i] : bars[i];
+          var v = aligned.line ? line[i] : bars[i];
           if (v == null) return null;
-          return zeroY - (v / range) * chartH;
+          return padT + ((max - v) / range) * chartH;
         });
-
-        // Stroke
-        ctx.strokeStyle = '#fbbf24'; // amber accent line
-        ctx.lineWidth = 1.5;
-        ctx.beginPath();
-        var started = false;
-        for (var i = 0; i < lineY.length; i++) {
-          if (lineY[i] == null) continue;
-          if (!started) { ctx.moveTo(barCenters[i], lineY[i]); started = true; }
-          else ctx.lineTo(barCenters[i], lineY[i]);
+        var pts = [];
+        for (var p = 0; p < lineY.length; p++) {
+          if (lineY[p] == null) continue;
+          pts.push({ x: barCenters[p], y: lineY[p] });
         }
-        ctx.stroke();
-
-        // Dots
-        ctx.fillStyle = '#fbbf24';
-        for (var j = 0; j < lineY.length; j++) {
-          if (lineY[j] == null) continue;
+        if (pts.length >= 2) {
+          // Soft fill under the line
+          var fillGrad = ctx.createLinearGradient(0, padT, 0, padT + chartH);
+          fillGrad.addColorStop(0, 'rgba(251,191,36,.16)');
+          fillGrad.addColorStop(1, 'rgba(251,191,36,0)');
+          ctx.fillStyle = fillGrad;
           ctx.beginPath();
-          ctx.arc(barCenters[j], lineY[j], 2.5, 0, Math.PI * 2);
+          ctx.moveTo(pts[0].x, padT + chartH);
+          ctx.lineTo(pts[0].x, pts[0].y);
+          for (var k = 0; k < pts.length - 1; k++) {
+            var p0 = pts[Math.max(0, k - 1)];
+            var p1 = pts[k];
+            var p2 = pts[k + 1];
+            var p3 = pts[Math.min(pts.length - 1, k + 2)];
+            var cp1x = p1.x + (p2.x - p0.x) / 6;
+            var cp1y = p1.y + (p2.y - p0.y) / 6;
+            var cp2x = p2.x - (p3.x - p1.x) / 6;
+            var cp2y = p2.y - (p3.y - p1.y) / 6;
+            ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+          }
+          ctx.lineTo(pts[pts.length - 1].x, padT + chartH);
+          ctx.closePath();
           ctx.fill();
+
+          // Stroke the line itself
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 2;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          ctx.moveTo(pts[0].x, pts[0].y);
+          for (var k2 = 0; k2 < pts.length - 1; k2++) {
+            var q0 = pts[Math.max(0, k2 - 1)];
+            var q1 = pts[k2];
+            var q2 = pts[k2 + 1];
+            var q3 = pts[Math.min(pts.length - 1, k2 + 2)];
+            var c1x = q1.x + (q2.x - q0.x) / 6;
+            var c1y = q1.y + (q2.y - q0.y) / 6;
+            var c2x = q2.x - (q3.x - q1.x) / 6;
+            var c2y = q2.y - (q3.y - q1.y) / 6;
+            ctx.bezierCurveTo(c1x, c1y, c2x, c2y, q2.x, q2.y);
+          }
+          ctx.stroke();
+
+          // Dots: latest has white outer ring for emphasis
+          for (var j = 0; j < pts.length; j++) {
+            var isLastPt = j === pts.length - 1;
+            if (isLastPt) {
+              ctx.fillStyle = '#ffffff';
+              ctx.beginPath();
+              ctx.arc(pts[j].x, pts[j].y, 4.5, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            ctx.fillStyle = '#fbbf24';
+            ctx.beginPath();
+            ctx.arc(pts[j].x, pts[j].y, isLastPt ? 3 : 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
+      }
+
+      // ── Latest bar value pill (rendered last so it overlays bars/line cleanly) ──
+      var lastIdx = n - 1, lastV = bars[lastIdx];
+      if (lastV != null) {
+        var lastH = Math.abs(lastV / range) * chartH;
+        var lastY = lastV >= 0 ? zeroY - lastH : zeroY + lastH;
+        var labelText = fmtB(lastV);
+        ctx.font = '700 10.5px Inter, sans-serif';
+        var tw = ctx.measureText(labelText).width;
+        var pillW = tw + 12, pillH = 16;
+        var pillX = barCenters[lastIdx] - pillW / 2;
+        var pillY = lastV >= 0 ? lastY - pillH - 5 : lastY + 5;
+        if (pillX < padL) pillX = padL;
+        if (pillX + pillW > cssW - padR) pillX = cssW - padR - pillW;
+        if (pillY < 2) pillY = 2;
+        ctx.fillStyle = 'rgba(8,12,24,.92)';
+        var pr = 5;
+        ctx.beginPath();
+        ctx.moveTo(pillX + pr, pillY);
+        ctx.lineTo(pillX + pillW - pr, pillY);
+        ctx.quadraticCurveTo(pillX + pillW, pillY, pillX + pillW, pillY + pr);
+        ctx.lineTo(pillX + pillW, pillY + pillH - pr);
+        ctx.quadraticCurveTo(pillX + pillW, pillY + pillH, pillX + pillW - pr, pillY + pillH);
+        ctx.lineTo(pillX + pr, pillY + pillH);
+        ctx.quadraticCurveTo(pillX, pillY + pillH, pillX, pillY + pillH - pr);
+        ctx.lineTo(pillX, pillY + pr);
+        ctx.quadraticCurveTo(pillX, pillY, pillX + pr, pillY);
+        ctx.closePath();
+        ctx.fill();
+        ctx.strokeStyle = hexA(color, .55);
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = '#ffffff';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(labelText, pillX + pillW / 2, pillY + pillH / 2 + 0.5);
+        ctx.textBaseline = 'alphabetic';
       }
     }
 
@@ -14405,10 +14559,12 @@
       if (lastP && prevP && prevP.val !== 0) {
         var pct = ((lastP.val - prevP.val) / Math.abs(prevP.val)) * 100;
         var cls = pct >= 0 ? 'up' : 'dn';
-        var sign = pct >= 0 ? '+' : '';
-        yoyHTML = '<span class="yoy ' + cls + '">' + sign + pct.toFixed(1) + '%</span>';
+        var arrow = pct >= 0 ? '▲' : '▼';
+        yoyHTML = '<span class="yoy ' + cls + '">' + arrow + ' ' + Math.abs(pct).toFixed(1) + '%</span>';
       }
-      var primText = lastP ? '<span class="val">' + fmtB(lastP.val) + '</span> FY' + lastP.fy : '–';
+      var primText = lastP
+        ? '<span class="val">' + fmtB(lastP.val) + '</span><span class="fy">FY' + String(lastP.fy).slice(-2) + '</span>'
+        : '<span class="val">–</span>';
       var secText = '';
       if (group.line) {
         var lastS = secondarySeries[secondarySeries.length - 1];
@@ -14442,7 +14598,7 @@
 
       var html = '';
       GROUPS.forEach(function(g) {
-        html += '<div class="fin-chart-card" data-group="' + g.id + '">'
+        html += '<div class="fin-chart-card" data-group="' + g.id + '" style="--card-accent:' + color + '">'
           + buildHead(sym, g, primaryMap[g.id], secondaryMap[g.id])
           + '<canvas class="fin-chart-canvas" data-group="' + g.id + '"></canvas>'
           + '</div>';
