@@ -20,34 +20,83 @@ const FIELDS = [
   'numberOfAnalystOpinions', 'fiftyTwoWeekHigh', 'fiftyTwoWeekLow', 'beta',
 ];
 
-const UA_POOL = [
-  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-  'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15',
-];
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36';
 
-function fetchJSON(url) {
+// Generic HTTPS GET that also returns the raw response so we can capture cookies.
+function httpGet(url, opts = {}) {
   return new Promise((resolve, reject) => {
-    const req = https.get(url, {
-      headers: {
-        'User-Agent': UA_POOL[Math.floor(Math.random() * UA_POOL.length)],
-        'Accept': 'application/json',
-        'Accept-Language': 'en-US,en;q=0.9',
-      },
-    }, (res) => {
+    const headers = Object.assign({
+      'User-Agent': UA,
+      'Accept': 'application/json,text/csv,text/plain,*/*',
+      'Accept-Language': 'en-US,en;q=0.9',
+    }, opts.headers || {});
+    const req = https.get(url, { headers }, (res) => {
       const chunks = [];
       res.on('data', (c) => chunks.push(c));
       res.on('end', () => {
-        if (res.statusCode >= 400) return reject(new Error('HTTP ' + res.statusCode));
-        try {
-          resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
-        } catch (e) {
-          reject(new Error('JSON parse: ' + e.message));
+        const body = Buffer.concat(chunks).toString('utf8');
+        // Follow simple redirects (3xx) once
+        if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location && !opts._noRedirect) {
+          return resolve(httpGet(res.headers.location, Object.assign({ _noRedirect: true }, opts)));
         }
+        resolve({ status: res.statusCode, headers: res.headers, body });
       });
     });
     req.on('error', reject);
     req.setTimeout(15000, () => req.destroy(new Error('timeout')));
   });
+}
+
+// Get Yahoo Finance session (cookie + crumb) required for v10 quoteSummary.
+// Without these, Yahoo returns HTTP 401 'Invalid Cookie'.
+let _yahooSession = null;
+async function getYahooSession() {
+  if (_yahooSession) return _yahooSession;
+  // Step 1: Hit fc.yahoo.com to get session cookies
+  const cookieResp = await httpGet('https://fc.yahoo.com/', {});
+  // It returns 404 but sets the cookies we need
+  const setCookie = cookieResp.headers['set-cookie'] || [];
+  const cookie = setCookie.map((c) => c.split(';')[0]).join('; ');
+  if (!cookie) throw new Error('no Yahoo session cookie');
+
+  // Step 2: Exchange cookie for crumb
+  const crumbResp = await httpGet('https://query1.finance.yahoo.com/v1/test/getcrumb', {
+    headers: { Cookie: cookie },
+  });
+  if (crumbResp.status !== 200) throw new Error('crumb HTTP ' + crumbResp.status);
+  const crumb = crumbResp.body.trim();
+  if (!crumb || crumb.length < 4) throw new Error('empty crumb');
+
+  _yahooSession = { cookie, crumb };
+  return _yahooSession;
+}
+
+async function fetchJSON(url, withCrumb = true) {
+  let finalUrl = url;
+  let cookieHeader = '';
+  if (withCrumb) {
+    try {
+      const sess = await getYahooSession();
+      const sep = url.includes('?') ? '&' : '?';
+      finalUrl = url + sep + 'crumb=' + encodeURIComponent(sess.crumb);
+      cookieHeader = sess.cookie;
+    } catch (e) {
+      // Proceed without crumb — some endpoints still work
+    }
+  }
+  const resp = await httpGet(finalUrl, {
+    headers: cookieHeader ? { Cookie: cookieHeader } : {},
+  });
+  if (resp.status >= 400) {
+    // If we hit 401 once, invalidate the session and let the caller retry once
+    if (resp.status === 401) _yahooSession = null;
+    throw new Error('HTTP ' + resp.status);
+  }
+  try {
+    return JSON.parse(resp.body);
+  } catch (e) {
+    throw new Error('JSON parse: ' + e.message);
+  }
 }
 
 function unwrap(v) {
@@ -70,7 +119,18 @@ function getPath(obj, path) {
 async function fetchValuation(symbol) {
   const modules = ['summaryDetail', 'defaultKeyStatistics', 'financialData', 'price'].join(',');
   const url = `https://query2.finance.yahoo.com/v10/finance/quoteSummary/${symbol}?modules=${modules}`;
-  const j = await fetchJSON(url);
+  let j;
+  try {
+    j = await fetchJSON(url);
+  } catch (e) {
+    // One retry with a fresh session if first attempt 401'd
+    if (String(e.message).includes('401')) {
+      _yahooSession = null;
+      j = await fetchJSON(url);
+    } else {
+      throw e;
+    }
+  }
   const r = getPath(j, 'quoteSummary.result.0');
   if (!r) throw new Error('empty quoteSummary');
   return {
@@ -147,8 +207,10 @@ async function main() {
 
   const ok = Object.keys(results).length;
   if (ok === 0) {
-    console.error('No data fetched. Aborting.');
-    process.exit(1);
+    // Soft-fail: don't crash the workflow when Yahoo is fully rate-limiting.
+    // The FALLBACK in financials.js still serves users with the last good values.
+    console.warn('No data fetched this run. Existing FALLBACK values remain in place.');
+    return;
   }
 
   console.log('\nPatching FALLBACK in financials.js...');
