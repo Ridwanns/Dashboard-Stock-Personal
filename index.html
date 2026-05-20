@@ -15647,6 +15647,14 @@
         if (cached) { renderForSymbol(sym, cached); return; }
       }
 
+      // On GitHub Pages / file:// → use client fallback instantly (no slow proxy chain)
+      var fb = window.__clientFallback && window.__clientFallback[sym];
+      if (fb && (window.__isNetlifyBypassed && window.__isNetlifyBypassed())) {
+        saveCache(sym, fb);
+        renderForSymbol(sym, fb);
+        return;
+      }
+
       cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           var hasRev = data && data.revenue && data.revenue.length;
@@ -15657,12 +15665,10 @@
         })
         .catch(function(err) {
           console.warn('[financials] fetch failed for', sym, err);
-          // Try client-side fallback before giving up
-          var fb = window.__clientFallback && window.__clientFallback[sym];
-          if (fb) {
-            console.log('[financials] using client fallback for', sym);
-            saveCache(sym, fb);
-            renderForSymbol(sym, fb);
+          var cfb = window.__clientFallback && window.__clientFallback[sym];
+          if (cfb) {
+            saveCache(sym, cfb);
+            renderForSymbol(sym, cfb);
             return;
           }
           rendered[sym] = false;
@@ -16076,7 +16082,13 @@
       var cached = window.__finDataCache && window.__finDataCache.get(sym);
       if (cached) { renderAll(sym, cached); return; }
 
-      // Fetch via resilientApi chain (CORS proxies on GitHub Pages)
+      // On GitHub Pages / file:// → use client fallback instantly (no slow proxy chain)
+      var fb = window.__clientFallback && window.__clientFallback[sym];
+      if (fb && (window.__isNetlifyBypassed && window.__isNetlifyBypassed())) {
+        renderAll(sym, fb);
+        return;
+      }
+
       cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           if (window.__finDataCache) window.__finDataCache.set(sym, data);
@@ -16084,11 +16096,9 @@
         })
         .catch(function(err){
           console.warn('[fin-extras] fetch fail', sym, err);
-          // Try client-side fallback before showing error
-          var fb = window.__clientFallback && window.__clientFallback[sym];
-          if (fb) {
-            console.log('[fin-extras] using client fallback for', sym);
-            renderAll(sym, fb);
+          var cfb = window.__clientFallback && window.__clientFallback[sym];
+          if (cfb) {
+            renderAll(sym, cfb);
             return;
           }
           rendered[sym] = false;
