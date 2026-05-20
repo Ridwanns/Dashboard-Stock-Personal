@@ -12965,24 +12965,29 @@
           attempts.push(function(){ return fetchEohdQuotes(symsParam); });
 
           var alts = quotesAlternateUpstreams(symsParam);
-          CORS_PROXIES.forEach(function(makeUrl){
+          // On GitHub Pages, EODHD is primary — limit proxy backup to 2 instead of 7×3=21 attempts
+          var qMax = isNetlifyBypassed() ? 2 : CORS_PROXIES.length;
+          CORS_PROXIES.slice(0, qMax).forEach(function(makeUrl){
             attempts.push(function(){ return fetchJSON(makeUrl(info.upstream), opts).then(function(raw){ return normalizeUpstreamResponse(info, raw); }); });
           });
-          CORS_PROXIES.forEach(function(makeUrl){
+          CORS_PROXIES.slice(0, qMax).forEach(function(makeUrl){
             attempts.push(function(){ return fetchJSON(makeUrl(alts.v8), opts).then(function(raw){ return normalizeUpstreamResponse({ kind: 'quotes-v8', sym: info.sym }, raw); }); });
           });
-          CORS_PROXIES.forEach(function(makeUrl){
+          CORS_PROXIES.slice(0, qMax).forEach(function(makeUrl){
             attempts.push(function(){ return fetchText(makeUrl(alts.stooq), opts).then(function(csv){ return normalizeUpstreamResponse({ kind: 'quotes-stooq', sym: info.sym }, csv); }); });
           });
         } else if (info.kind === 'history') {
           // History chain (Phase 9): EODHD direct → Yahoo chart via proxies.
           attempts.push(function(){ return fetchEohdHistory(info.sym); });
-          CORS_PROXIES.forEach(function(makeUrl){
+          var hMax = isNetlifyBypassed() ? 2 : CORS_PROXIES.length;
+          CORS_PROXIES.slice(0, hMax).forEach(function(makeUrl){
             attempts.push(function(){ return fetchJSON(makeUrl(info.upstream), opts).then(function(raw){ return normalizeUpstreamResponse(info, raw); }); });
           });
         } else {
           // financials, peers — Yahoo proxy chain only (no EODHD coverage worth wiring).
-          CORS_PROXIES.forEach(function(makeUrl){
+          // On GitHub Pages, limit to 2 proxies max (Yahoo needs crumb so most will fail).
+          var maxProxies = isNetlifyBypassed() ? 2 : CORS_PROXIES.length;
+          CORS_PROXIES.slice(0, maxProxies).forEach(function(makeUrl){
             attempts.push(function(){ return fetchJSON(makeUrl(info.upstream), opts).then(function(raw){ return normalizeUpstreamResponse(info, raw); }); });
           });
         }
@@ -13003,6 +13008,18 @@
           if (p && p.exp && p.exp > Date.now()) return Promise.resolve(p.data);
         }
       } catch(e){}
+
+      // On GitHub Pages / file:// → serve financials from client fallback instantly.
+      // Skips the entire resilientApi proxy chain (7 proxies × 15s timeout = minutes of waiting).
+      if (isNetlifyBypassed() && window.__clientFallback) {
+        var m = url.match(/\/api\/financials\?symbol=([A-Z]+)/);
+        if (m && window.__clientFallback[m[1]]) {
+          var fb = window.__clientFallback[m[1]];
+          try { sessionStorage.setItem(key, JSON.stringify({ data: fb, exp: Date.now() + SS_TTL })); } catch(e){}
+          return Promise.resolve(fb);
+        }
+      }
+
       var isApi = /^\/api\//.test(url) || /\/api\//.test(url);
       var go = isApi ? resilientApi(url, opts) : fetchJSON(url, opts);
       return go.then(function(d){
@@ -15647,14 +15664,6 @@
         if (cached) { renderForSymbol(sym, cached); return; }
       }
 
-      // On GitHub Pages / file:// → use client fallback instantly (no slow proxy chain)
-      var fb = window.__clientFallback && window.__clientFallback[sym];
-      if (fb && (window.__isNetlifyBypassed && window.__isNetlifyBypassed())) {
-        saveCache(sym, fb);
-        renderForSymbol(sym, fb);
-        return;
-      }
-
       cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           var hasRev = data && data.revenue && data.revenue.length;
@@ -15665,12 +15674,6 @@
         })
         .catch(function(err) {
           console.warn('[financials] fetch failed for', sym, err);
-          var cfb = window.__clientFallback && window.__clientFallback[sym];
-          if (cfb) {
-            saveCache(sym, cfb);
-            renderForSymbol(sym, cfb);
-            return;
-          }
           rendered[sym] = false;
           showError(sym, err.message || String(err));
         });
@@ -16082,13 +16085,6 @@
       var cached = window.__finDataCache && window.__finDataCache.get(sym);
       if (cached) { renderAll(sym, cached); return; }
 
-      // On GitHub Pages / file:// → use client fallback instantly (no slow proxy chain)
-      var fb = window.__clientFallback && window.__clientFallback[sym];
-      if (fb && (window.__isNetlifyBypassed && window.__isNetlifyBypassed())) {
-        renderAll(sym, fb);
-        return;
-      }
-
       cachedFetch('/api/financials?symbol=' + sym)
         .then(function(data) {
           if (window.__finDataCache) window.__finDataCache.set(sym, data);
@@ -16096,11 +16092,6 @@
         })
         .catch(function(err){
           console.warn('[fin-extras] fetch fail', sym, err);
-          var cfb = window.__clientFallback && window.__clientFallback[sym];
-          if (cfb) {
-            renderAll(sym, cfb);
-            return;
-          }
           rendered[sym] = false;
           var symValDisplay = document.querySelector('.val-display[data-val-symbol="' + sym + '"]');
           if (symValDisplay) symValDisplay.innerHTML = '<div class="fin-error" style="padding:30px"><div>Could not load data</div></div>';
