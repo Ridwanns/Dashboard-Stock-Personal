@@ -47,12 +47,12 @@ const CIK = {
 //   TSM  — Annual Reports 2021..2025 (NTD converted at year-end FX)
 const FALLBACK = {
   MU: {
-    forwardPE: 6.81, trailingPE: 32.96, priceToSales: 13.56, priceToBook: 10.88, evToEbitda: 21.31,
-    forwardEPS: 102.58, trailingEPS: 21.20,
-    targetMeanPrice: 612.66, targetHighPrice: 1100.00, targetLowPrice: 249.00,
-    numberOfAnalystOpinions: 41,
-    currentPrice: 698.74,
-    fiftyTwoWeekHigh: 818.67, fiftyTwoWeekLow: 90.93,
+    forwardPE: 7.31, trailingPE: 35.46, priceToSales: 14.57, priceToBook: 11.69, evToEbitda: 22.91,
+    forwardEPS: 102.74, trailingEPS: 21.18,
+    targetMeanPrice: 613.23, targetHighPrice: 1100.00, targetLowPrice: 249.00,
+    numberOfAnalystOpinions: 40,
+    currentPrice: 751.00,
+    fiftyTwoWeekHigh: 818.67, fiftyTwoWeekLow: 92.22,
     beta: 1.92,
     cash: 9.642e9, debt: 14.017e9, sharesOut: 1.122e9,
     // Verified from FY22 + FY25 10-K filings
@@ -71,12 +71,12 @@ const FALLBACK = {
     cff:         [{fy:2021,val:-1.781e9},{fy:2022,val:-2.980e9},{fy:2023,val:4.983e9}, {fy:2024,val:-1.842e9},{fy:2025,val:-0.850e9}],
   },
   AMD: {
-    forwardPE: 31.96, trailingPE: 138.48, priceToSales: 18.03, priceToBook: 10.47, evToEbitda: 89.73,
-    forwardEPS: 12.95, trailingEPS: 2.99,
-    targetMeanPrice: 460.79, targetHighPrice: 625.00, targetLowPrice: 225.00,
+    forwardPE: 36.07, trailingPE: 156.36, priceToSales: 20.35, priceToBook: 11.82, evToEbitda: 101.46,
+    forwardEPS: 12.96, trailingEPS: 2.99,
+    targetMeanPrice: 472.17, targetHighPrice: 625.00, targetLowPrice: 225.00,
     numberOfAnalystOpinions: 48,
-    currentPrice: 414.05,
-    fiftyTwoWeekHigh: 469.22, fiftyTwoWeekLow: 107.67,
+    currentPrice: 467.51,
+    fiftyTwoWeekHigh: 481.41, fiftyTwoWeekLow: 108.62,
     beta: 2.40,
     cash: 5.585e9, debt: 2.997e9, sharesOut: 1.631e9,
     // Verified from Q4 FY21..FY25 GAAP earnings tables
@@ -95,12 +95,12 @@ const FALLBACK = {
     cff:         [{fy:2021,val:-0.045e9},{fy:2022,val:-3.215e9},{fy:2023,val:-0.342e9},{fy:2024,val:-1.519e9},{fy:2025,val:-2.310e9}],
   },
   NVDA: {
-    forwardPE: 18.98, trailingPE: 45.11, priceToSales: 24.74, priceToBook: 34.09, evToEbitda: 39.85,
-    forwardEPS: 11.63, trailingEPS: 4.89,
-    targetMeanPrice: 275.31, targetHighPrice: 380.00, targetLowPrice: 140.00,
-    numberOfAnalystOpinions: 57,
-    currentPrice: 220.61,
-    fiftyTwoWeekHigh: 236.54, fiftyTwoWeekLow: 129.16,
+    forwardPE: 17.03, trailingPE: 33.03, priceToSales: 20.57, priceToBook: 33.27, evToEbitda: 31.24,
+    forwardEPS: 12.65, trailingEPS: 6.52,
+    targetMeanPrice: 294.22, targetHighPrice: 500.00, targetLowPrice: 180.00,
+    numberOfAnalystOpinions: 58,
+    currentPrice: 215.33,
+    fiftyTwoWeekHigh: 236.54, fiftyTwoWeekLow: 132.92,
     beta: 2.24,
     cash: 10.605e9, debt: 9.812e9, sharesOut: 24.304e9,
     // Verified from FY22..FY26 10-Ks (fiscal year ends late January)
@@ -119,12 +119,12 @@ const FALLBACK = {
     cff:         [{fy:2022,val:-1.250e9},{fy:2023,val:-11.617e9},{fy:2024,val:-13.633e9},{fy:2025,val:-42.359e9},{fy:2026,val:-48.474e9}],
   },
   TSM: {
-    forwardPE: 20.12, trailingPE: 33.73, priceToSales: 0.50, priceToBook: 60.06, evToEbitda: 2.78,
-    forwardEPS: 19.52, trailingEPS: 11.64,
+    forwardPE: 20.73, trailingPE: 34.72, priceToSales: 0.51, priceToBook: 61.88, evToEbitda: 2.89,
+    forwardEPS: 19.52, trailingEPS: 11.65,
     targetMeanPrice: 467.84, targetHighPrice: 600.00, targetLowPrice: 354.00,
     numberOfAnalystOpinions: 18,
-    currentPrice: 392.61,
-    fiftyTwoWeekHigh: 421.97, fiftyTwoWeekLow: 190.03,
+    currentPrice: 404.52,
+    fiftyTwoWeekHigh: 421.97, fiftyTwoWeekLow: 190.56,
     beta: 1.26,
     cash: 94.674e9, debt: 32.0e9, sharesOut: 5.189e9,
     // Verified from 2024 + 2025 Annual Report ch6 (NTD converted to USD)
